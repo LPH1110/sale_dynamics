@@ -1,25 +1,63 @@
-import logo from './logo.svg';
-import './App.css';
+import { Route, Routes } from 'react-router-dom';
+import { publicRoutes } from './routes';
+import ProtectedRoute from './routes/ProtectedRoute';
+import Authority from './routes/Authority';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <div className="App">
+            <Routes>
+                {publicRoutes.map((route) => {
+                    const Layout = route.layout;
+                    const Page = route.page;
+                    switch (route.path) {
+                        case '/':
+                            return (
+                                <Route
+                                    exact
+                                    key={route.path}
+                                    path={route.path}
+                                    element={
+                                        <ProtectedRoute>
+                                            <Layout>
+                                                <Page />
+                                            </Layout>
+                                        </ProtectedRoute>
+                                    }
+                                />
+                            );
+                        default:
+                            return route.protected ? (
+                                <Route
+                                    key={route.path}
+                                    path={route.path}
+                                    element={
+                                        <ProtectedRoute>
+                                            <Layout>
+                                                <Page />
+                                            </Layout>
+                                        </ProtectedRoute>
+                                    }
+                                />
+                            ) : (
+                                <Route
+                                    key={route.path}
+                                    path={route.path}
+                                    element={
+                                        <Layout>
+                                            <Page />
+                                        </Layout>
+                                    }
+                                />
+                            );
+                    }
+                })}
+            </Routes>
+            <ToastContainer />
+        </div>
+    );
 }
 
 export default App;

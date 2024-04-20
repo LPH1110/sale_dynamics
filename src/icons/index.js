@@ -1,0 +1,14 @@
+export { default as HomeIcon } from './Home';
+export { default as UserIcon } from './User';
+export { default as PlusIcon } from './Plus';
+export { default as TrashIcon } from './Trash';
+export { default as EnvelopeIcon } from './Envelope';
+export { default as PencilIcon } from './Pencil';
+export { default as KeyIcon } from './Key';
+export { default as Cog8ToothIcon } from './Cog8Tooth';
+export { default as ArrowLeftRectangleIcon } from './ArrowLeftRectangle';
+export { default as ShoppingCartIcon } from './ShoppingCart';
+export { default as CubeIcon } from './Cube';
+export { default as ChevronDownIcon } from './ChevronDown';
+export { default as QuestionMarkCircleIcon } from './QuestionMarkCircle';
+export { Spinner } from './Spinner';
