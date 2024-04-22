@@ -3,26 +3,42 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { UserAuth } from '~/contexts/AuthContext/AuthProvider';
 import { Spinner } from '~/icons';
+import { request } from '~/utils';
 
 const AccountDetail = () => {
-    const { userId } = useParams();
+    const { username } = useParams();
     const [account, setAccount] = useState({});
     const [saveChangesLoading, setSaveChangesLoading] = useState(false);
+    const [form, setForm] = useState({
+        fullName: '',
+        phone: '',
+        email: '',
+    });
 
     useEffect(() => {
         const fetchAccount = async () => {
             try {
-                const res = await axios.get(
-                    `${process.env.REACT_APP_SERVER_BASE}/account/read_by_id.php?user_id=${userId}`,
-                );
-                setAccount(res.data || {});
+                const user = await request.get(`user/detail?username=${username}`);
+                setAccount(user);
+                setForm({
+                    fullName: user?.fullName,
+                    phone: user?.phone,
+                    email: user?.email,
+                });
             } catch (error) {
                 console.log(error);
             }
         };
 
         fetchAccount();
-    }, [userId]);
+    }, [username]);
+
+    const saveChanges = async (e) => {
+        e.preventDefault();
+        setSaveChangesLoading(true);
+        console.log(form);
+        setSaveChangesLoading(false);
+    };
 
     return (
         <section className="h-screen-content overflow-auto p-4 space-y-4">
@@ -32,7 +48,7 @@ const AccountDetail = () => {
                     <div className="w-24 h-24 bg-gray-100 rounded-full"></div>
                 </section>
                 <section>
-                    <h2 className="font-semibold">{account?.fullname}</h2>
+                    <h2 className="font-semibold">{account?.fullName}</h2>
                     <div>
                         <Link to={`mailto:${account?.email}`} className="text-sm text-gray-600">
                             {account?.email}
@@ -40,7 +56,7 @@ const AccountDetail = () => {
                     </div>
                     <div>
                         <Link to="phone:0935572755" className="text-sm text-gray-600">
-                            0935572755
+                            {account?.phone}
                         </Link>
                     </div>
                 </section>
@@ -51,7 +67,7 @@ const AccountDetail = () => {
                     <section className="bg-white shadow-sm col-span-4 border rounded-md p-4 space-y-6">
                         <h4 className="text-sm font-semibold">Personal Information</h4>
                         <section>
-                            <form className="space-y-6">
+                            <form onSubmit={saveChanges} className="space-y-6">
                                 <div className="flex justify-between">
                                     <div className="space-y-6 flex flex-col">
                                         <label htmlFor="fullName" className="py-1 flex-1 text-sm capitalize">
@@ -69,7 +85,10 @@ const AccountDetail = () => {
                                             <input
                                                 className="text-sm border w-full px-2 py-1 rounded-sm ring-2 ring-transparent focus:ring-blue-400 transition"
                                                 type="text"
-                                                value={account?.fullname}
+                                                value={form.fullName}
+                                                onChange={(e) =>
+                                                    setForm((prev) => ({ ...prev, fullName: e.target.value }))
+                                                }
                                                 placeholder="---"
                                                 name="fullName"
                                                 id="fullName"
@@ -82,6 +101,10 @@ const AccountDetail = () => {
                                                 placeholder="---"
                                                 name="phoneNumber"
                                                 id="phoneNumber"
+                                                value={form.phone}
+                                                onChange={(e) =>
+                                                    setForm((prev) => ({ ...prev, phone: e.target.value }))
+                                                }
                                             />
                                         </div>
                                         <div className="space-y-2 w-full">
@@ -89,7 +112,10 @@ const AccountDetail = () => {
                                                 className="border text-sm w-full px-2 py-1 rounded-sm ring-2 ring-transparent focus:ring-blue-400 transition"
                                                 type="text"
                                                 placeholder="---"
-                                                value={account?.email}
+                                                value={form.email}
+                                                onChange={(e) =>
+                                                    setForm((prev) => ({ ...prev, email: e.target.value }))
+                                                }
                                                 name="email"
                                                 id="email"
                                             />

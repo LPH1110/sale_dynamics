@@ -5,6 +5,7 @@ import ConfirmDeletionModal from './ConfirmDeletionModal';
 import ConfirmClearImage from './ConfirmClearImage';
 import ConfirmCancelProductUpdates from './ConfirmCancelProductUpdates';
 import UpdateVariantThumb from './UpdateVariantThumb';
+import ResendVerification from './ResendVerification';
 
 export default function Modal({
     setCreateVariantForm,
@@ -14,9 +15,10 @@ export default function Modal({
     open,
     setOpen,
     action,
+    setAccounts,
 }) {
     const [dialogs] = useState({
-        'create-account': <CreateAccountModal setOpen={setOpen} />,
+        'create-account': <CreateAccountModal setAccounts={setAccounts} setOpen={setOpen} />,
         'confirm-delete': <ConfirmDeletionModal tableName={tableName} setOpen={setOpen} />,
         'confirm-clear-image': <ConfirmClearImage setCreateProductInfo={setCreateProductInfo} setOpen={setOpen} />,
         'confirm-cancel-product-updates': (
@@ -24,6 +26,7 @@ export default function Modal({
         ),
         'update-variant-thumb': <UpdateVariantThumb setOpen={setOpen} setCreateVariantForm={setCreateVariantForm} />,
         'confirm-cancel-create-variant': <div>Cancel create variant</div>,
+        'resend-verification': <ResendVerification setOpen={setOpen} />,
     });
 
     const cancelButtonRef = useRef(null);

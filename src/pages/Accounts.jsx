@@ -6,11 +6,19 @@ import { Modal } from '~/components';
 import { EnvelopeIcon, PlusIcon, TrashIcon } from '~/icons';
 import { actions, useStore } from '~/store';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { authorizeAdmin, request } from '~/utils';
+import { userService } from '~/services';
+import { toast } from 'react-toastify';
 
 const tableHeadings = [
     {
         id: uuidv4(),
         title: '',
+    },
+    {
+        id: uuidv4(),
+
+        title: 'User name',
     },
     {
         id: uuidv4(),
@@ -22,7 +30,7 @@ const tableHeadings = [
         id: uuidv4(),
     },
     {
-        title: 'password',
+        title: 'Enabled',
         id: uuidv4(),
     },
     {
@@ -35,7 +43,7 @@ const tableHeadings = [
     },
 ];
 
-const DataRow = ({ setCheckedRows, data }) => {
+const DataRow = ({ data }) => {
     const checkRef = useRef();
     const [checked, setChecked] = useState(false);
     const [, dispatch] = useStore();
@@ -43,9 +51,9 @@ const DataRow = ({ setCheckedRows, data }) => {
     const handleChecked = (e) => {
         setChecked(e.target.checked);
         if (e.target.checked) {
-            dispatch(actions.addCheckedRow(data.userId));
+            dispatch(actions.addCheckedRow(data));
         } else {
-            dispatch(actions.deleteCheckedRow(data.userId));
+            dispatch(actions.deleteCheckedRow(data));
         }
     };
 
@@ -60,14 +68,15 @@ const DataRow = ({ setCheckedRows, data }) => {
             <td className="text-center p-3 hover:bg-gray-100">
                 <input onChange={handleChecked} ref={checkRef} className="w-4 h-4" type="checkbox" />
             </td>
+            <td className="text-sm p-3 hover:bg-gray-100">{data.username}</td>
             <td className="text-sm p-3 hover:bg-gray-100 hover:underline">
-                <NavLink className="text-blue-500" to={`/accounts/detail/${data.userId}`}>
+                <NavLink className="text-blue-500" to={`/accounts/detail/${data.username}`}>
                     {data.fullName}
                 </NavLink>
             </td>
             <td className="text-sm p-3 hover:bg-gray-100">{data.email}</td>
-            <td className="text-sm p-3 hover:bg-gray-100">{data.pw}</td>
-            <td className="text-sm p-3 hover:bg-gray-100">{data.isAdmin ? 'admin' : ''}</td>
+            <td className="text-sm p-3 hover:bg-gray-100">{data.enabled && 'yes'}</td>
+            <td className="text-sm p-3 hover:bg-gray-100">{authorizeAdmin(data) ? 'admin' : ''}</td>
             <td className="text-sm p-3 hover:bg-gray-100">{data.phone}</td>
         </tr>
     );
@@ -76,24 +85,20 @@ const DataRow = ({ setCheckedRows, data }) => {
 const Accounts = () => {
     const [openModal, setOpenModal] = useState(false);
     const [modalAction, setModalAction] = useState('');
-    const [checkedRows, setCheckedRows] = useState([]);
     const [checkAll, setCheckAll] = useState(false);
     const [accounts, setAccounts] = useState([]);
     const tableRef = useRef();
 
+    const [state, dispatch] = useStore();
+    const { checkedRows } = state;
+
     useEffect(() => {
-        const fetchAccounts = async () => {
-            try {
-                const res = await axios.get(`${process.env.REACT_APP_SERVER_BASE}/account/read_all.php`);
-                if (res.data) {
-                    setAccounts(res.data.data);
-                }
-            } catch (error) {
-                console.log(error);
-            }
+        const getUsers = async () => {
+            const users = await userService.fetchAll();
+            setAccounts(users);
         };
 
-        fetchAccounts();
+        getUsers();
     }, []);
 
     return (
@@ -129,6 +134,14 @@ const Accounts = () => {
                     </button>
                     <button
                         type="button"
+                        onClick={() => {
+                            if (checkedRows.length > 0) {
+                                setModalAction('resend-verification');
+                                setOpenModal(true);
+                            } else {
+                                toast.info('Select at least a row to resend verification');
+                            }
+                        }}
                         className=" flex gap-2 items-center justify-center px-3 py-2 text-sm rounded-sm hover:bg-gray-100"
                     >
                         <span className="w-5 h-5 text-blue-500">
@@ -180,14 +193,20 @@ const Accounts = () => {
 
                     <tbody>
                         {accounts.map((account) => (
-                            <Fragment key={account.userId}>
-                                <DataRow setCheckedRows={setCheckedRows} data={account} />
+                            <Fragment key={account.id}>
+                                <DataRow data={account} />
                             </Fragment>
                         ))}
                     </tbody>
                 </table>
             </section>
-            <Modal tableName="accounts" open={openModal} setOpen={setOpenModal} action={modalAction} />
+            <Modal
+                setAccounts={setAccounts}
+                tableName="accounts"
+                open={openModal}
+                setOpen={setOpenModal}
+                action={modalAction}
+            />
         </section>
     );
 };

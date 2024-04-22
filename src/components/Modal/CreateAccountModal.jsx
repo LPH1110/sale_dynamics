@@ -1,12 +1,17 @@
 import { useFormik } from 'formik';
-import React from 'react';
+import React, { useState } from 'react';
 import * as Yup from 'yup';
-import emailjs from '@emailjs/browser';
 import axios from 'axios';
 import { UserAuth } from '~/contexts/AuthContext/AuthProvider';
+import { request } from '~/utils';
+import { toast } from 'react-toastify';
+import { Spinner } from '~/icons';
+import { userService } from '~/services';
+import sendVerificationMail from '~/services/mail';
 
-const CreateAccountModal = ({ setOpen }) => {
+const CreateAccountModal = ({ setAccounts, setOpen }) => {
     const { user } = UserAuth();
+    const [isLoading, setIsLoading] = useState(false);
     const formik = useFormik({
         initialValues: {
             fullName: '',
@@ -20,27 +25,31 @@ const CreateAccountModal = ({ setOpen }) => {
         }),
         onSubmit: async (data) => {
             try {
-                const mailRes = await emailjs.send(
-                    process.env.REACT_APP_EMAILJS_SERVICE_ID,
-                    process.env.REACT_APP_EMAILJS_TEMPLATE_ID,
-                    {
-                        to_email: data.email,
-                        to_name: data.fullName,
-                        from_name: user.fullName,
-                        message: 'This is yoru login link', // Login link
-                    },
-                    {
-                        publicKey: process.env.REACT_APP_EMAILJS_PUBLIC_KEY,
-                        privateKey: process.env.REACT_APP_EMAILJS_PRIVATE_KEY,
-                    },
-                );
-                console.log(data);
-                const createAccountRes = await axios.post(
-                    `${process.env.REACT_APP_SERVER_BASE}/final_pos/api/account/create.php`,
-                    JSON.stringify({ fullName: data.fullName, email: data.email }),
-                );
+                setIsLoading(true);
+                // create user
+                const res = await request.post('admin/create', {
+                    fullName: data.fullName,
+                    phone: data.phoneNumber,
+                    email: data.email,
+                    password: data.password,
+                });
+                // send mail
+                sendVerificationMail({
+                    to_email: data.email,
+                    to_name: data.fullName,
+                    from_name: 'Le Phu Hao',
+                    message: `http://localhost:3000/verify-account/${res.token}`,
+                });
+
+                const users = await userService.fetchAll();
+                setAccounts(users);
+                toast.success(`Create ${data.fullName} successfully!`);
             } catch (error) {
                 console.log(error);
+                toast.error("Can't create account");
+            } finally {
+                setIsLoading(false);
+                setOpen(false);
             }
         },
     });
@@ -126,9 +135,9 @@ const CreateAccountModal = ({ setOpen }) => {
                 <div className="flex justify-end items-center gap-2 text-sm">
                     <button
                         type="submit"
-                        className="bg-blue-500 hover:bg-blue-600 transition font-semibold text-white py-2 px-4 rounded-sm"
+                        className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 transition font-semibold text-white py-2 px-4 rounded-sm"
                     >
-                        Save & close
+                        {isLoading ? <Spinner /> : 'Save & Close'}
                     </button>
                     <button
                         onClick={() => setOpen(false)}

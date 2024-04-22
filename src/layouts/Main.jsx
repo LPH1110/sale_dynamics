@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { Tooltip, UserMenu } from '~/components';
 import { UserAuth } from '~/contexts/AuthContext/AuthProvider';
 import { CubeIcon, HomeIcon, ShoppingCartIcon, UserIcon } from '~/icons';
+import { authorizeAdmin } from '~/utils';
 
 const navigations = [
     {
@@ -47,7 +48,9 @@ const navigations = [
 const Main = ({ children }) => {
     const { user } = UserAuth();
 
-    const filteredNavs = user?.isAdmin ? navigations : navigations.filter((nav) => !nav.isAdmin);
+    let isAdmin = authorizeAdmin(user);
+
+    const filteredNavs = isAdmin ? navigations : navigations.filter((nav) => !nav.isAdmin);
 
     return (
         <section>
@@ -56,7 +59,7 @@ const Main = ({ children }) => {
                 <div className="flex gap-4">
                     <UserMenu>
                         {/* Avatar */}
-                        <Tooltip message={user?.isAdmin ? 'Account Manager' : 'Account Staff'}>
+                        <Tooltip message={isAdmin ? 'Account Manager' : 'Account Staff'}>
                             <div className="ring-4 ring-transparent hover:ring-blue-700 transition h-7 w-7 rounded-full bg-white"></div>
                         </Tooltip>
                     </UserMenu>

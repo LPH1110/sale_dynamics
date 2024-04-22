@@ -25,9 +25,11 @@ const Signin = () => {
                 setIsLoading(true);
                 const res = await signin(data.username, data.password);
 
-                if (res.user_info) {
-                    toast.success(res.message);
+                if (res.user) {
+                    toast.success('Login successfully!');
                     navigate('/');
+                } else {
+                    toast.error('You must activate your account to signin. Please contact your manager!');
                 }
             } catch (error) {
                 console.log(error);

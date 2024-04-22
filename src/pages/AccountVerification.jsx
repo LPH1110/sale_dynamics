@@ -1,8 +1,10 @@
-import { CheckBadgeIcon } from '@heroicons/react/24/outline';
+import { CheckBadgeIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { Spinner } from '~/icons';
+import { request } from '~/utils';
 
 const AccountActivated = () => {
     return (
@@ -25,22 +27,19 @@ const AccountActivated = () => {
 };
 
 const AccountVerification = () => {
-    const { userId } = useParams();
+    const { token } = useParams();
     const [isLoading, setIsLoading] = useState(false);
     const [verified, setVerified] = useState(false);
-    const [timeout, setTimeOut] = useState();
 
     useEffect(() => {
-        setIsLoading(true);
         const verifyAccount = async () => {
             try {
                 setIsLoading(true);
-                const res = await axios.get(
-                    `${process.env.REACT_APP_SERVER_BASE}/accounts/verify.php?userId=${userId}`,
-                );
-                if (res.data) {
+                const res = await axios.get(`${process.env.REACT_APP_SERVER_BASE}/auth/verify-user?token=${token}`);
+                if (res.data.localeCompare('activated')) {
                     setVerified(true);
-                    console.log(res.data);
+                } else {
+                    toast.error(res);
                 }
             } catch (error) {
                 console.error(error);
@@ -49,17 +48,8 @@ const AccountVerification = () => {
             }
         };
 
-        setTimeOut(
-            setTimeout(() => {
-                setIsLoading(false);
-                setVerified(true);
-            }, 2000),
-        );
-
-        return () => clearTimeout(timeout);
-
-        // verifyAccount();
-    }, [userId]);
+        verifyAccount();
+    }, [token]);
 
     return verified ? (
         <AccountActivated />
@@ -67,7 +57,17 @@ const AccountVerification = () => {
         <section className="h-screen flex justify-center items-start bg-scooter-gradient">
             <section className="flex flex-col items-center w-full mt-20 max-w-[26rem] shadow-lg rounded-md p-4 bg-white space-y-6">
                 <h2 className="text-xl font-semibold  text-gray-600">Activating your account</h2>
-                {isLoading && <Spinner className="w-12 h-12" />}
+                {isLoading ? (
+                    <Spinner className="w-12 h-12" />
+                ) : (
+                    <div className="flex items-center justify-center gap-2 flex-col">
+                        <ExclamationTriangleIcon className="w-12 h-12 text-red-400" />
+                        <p className="text-sm text-gray-600 text-center px-6">
+                            Invalid verification token. Please contact to your admin to re-send another verification
+                            mail
+                        </p>
+                    </div>
+                )}
             </section>
         </section>
     );

@@ -8,13 +8,14 @@ const AuthProvider = ({ children }) => {
 
     const signin = async (username, password) => {
         try {
-            const res = await axios.post(
-                `${process.env.REACT_APP_SERVER_BASE}/account/login.php?username=${username}&password=${password}`,
-            );
-            if (res.data) {
-                setUser(res.data.user_info);
-                console.log(res.data.user_info);
-            }
+            const res = await axios.post(`${process.env.REACT_APP_SERVER_BASE}/auth/login`, {
+                username: username,
+                password: password,
+            });
+
+            setUser(res.data.user);
+            console.log(res.data.user);
+            window.localStorage.setItem('jwt', res.data.jwt);
 
             return res.data;
         } catch (error) {

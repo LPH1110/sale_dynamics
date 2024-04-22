@@ -44,7 +44,7 @@ const UserMenu = ({ children }) => {
                     className="min-w-[12rem] shadow-md z-50 absolute right-0 bg-white border rounded-md p-2 flex flex-col"
                 >
                     <Menu.Item>
-                        <Link className={cx('menu-item')} to={`/accounts/detail/${user.userId}`}>
+                        <Link className={cx('menu-item')} to={`/accounts/detail/${user.username}`}>
                             <span className="w-4 h-4">
                                 <UserIcon />
                             </span>
