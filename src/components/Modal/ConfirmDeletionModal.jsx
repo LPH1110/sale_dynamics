@@ -8,6 +8,8 @@ const ConfirmDeletionModal = ({ tableName, data, setOpen }) => {
     const [state] = useStore();
     const { checkedRows } = state;
 
+    console.log(checkedRows);
+
     const handleDeleteAccounts = async () => {
         try {
             setIsLoading(true);
@@ -28,8 +30,8 @@ const ConfirmDeletionModal = ({ tableName, data, setOpen }) => {
                 </p>
                 <ul>
                     {checkedRows.map((checked) => (
-                        <li key={checked} className="text-sm">
-                            {checked}
+                        <li key={checked.id} className="text-sm">
+                            {checked.username}
                         </li>
                     ))}
                 </ul>

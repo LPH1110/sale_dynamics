@@ -14,6 +14,8 @@ const ProductProperty = ({ index, tags, propertyName, handleSaveProperty, handle
     const addTagInput = useRef();
     // const [tags, setTags] = useState([])
 
+    console.log(propertyName);
+
     useEffect(() => {
         setPropName(propertyName);
     }, [propertyName]);

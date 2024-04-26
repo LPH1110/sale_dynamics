@@ -1,7 +1,6 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { UserAuth } from '~/contexts/AuthContext/AuthProvider';
+import { toast } from 'react-toastify';
 import { Spinner } from '~/icons';
 import { request } from '~/utils';
 
@@ -35,9 +34,16 @@ const AccountDetail = () => {
 
     const saveChanges = async (e) => {
         e.preventDefault();
-        setSaveChangesLoading(true);
-        console.log(form);
-        setSaveChangesLoading(false);
+        try {
+            setSaveChangesLoading(true);
+            const res = await request.post(`user/update?username=${username}`, JSON.stringify(form));
+            setAccount(res);
+            toast.success('Updated user info!');
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setSaveChangesLoading(false);
+        }
     };
 
     return (

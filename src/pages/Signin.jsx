@@ -25,11 +25,11 @@ const Signin = () => {
                 setIsLoading(true);
                 const res = await signin(data.username, data.password);
 
-                if (res.user) {
+                if (res?.user) {
                     toast.success('Login successfully!');
                     navigate('/');
                 } else {
-                    toast.error('You must activate your account to signin. Please contact your manager!');
+                    toast.error('Credential is not found!');
                 }
             } catch (error) {
                 console.log(error);

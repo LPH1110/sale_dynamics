@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useFormik } from 'formik';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -7,13 +6,16 @@ import * as Yup from 'yup';
 import {
     CalculationUnit,
     CreateProductHeader,
+    CreateProductProperties,
     CreateProductThumbnail,
     GeneralProductInfo,
     InventoryManagement,
     Modal,
     ProductPrice,
-    ProductProperties,
 } from '~/components';
+import { request } from '~/utils';
+
+const propertyNames = ['materials', 'colors', 'size'];
 
 const CreateProduct = () => {
     const [productInfo, setProductInfo] = useState({
@@ -27,7 +29,12 @@ const CreateProduct = () => {
         sku: '',
         barcode: '',
         baseUnit: '',
-        properties: {},
+        properties: [
+            {
+                name: propertyNames[Math.random() * 3],
+                tags: ['Sample tag'],
+            },
+        ],
     });
 
     const [openModal, setOpenModal] = useState(false);
@@ -58,13 +65,10 @@ const CreateProduct = () => {
         onSubmit: async () => {
             try {
                 setIsLoading(true);
-                console.log(JSON.stringify(productInfo));
-                const res = await axios.post(
-                    `${process.env.REACT_APP_SERVER_BASE}/products/createProduct.php`,
-                    JSON.stringify(productInfo),
-                );
+                const res = await request.post('products/save', JSON.stringify(productInfo));
                 toast.success('Create new product successfully');
-                navigate(`/products/detail/${productInfo.barcode}`);
+                console.log(res);
+                // navigate(`/products/detail/${productInfo.barcode}`);
             } catch (error) {
                 toast.error('Failed to create product');
             } finally {
@@ -82,6 +86,25 @@ const CreateProduct = () => {
                         thumbnails: [...prev.thumbnails, ...value],
                     };
                 });
+                break;
+            case 'properties':
+                setProductInfo((prev) => {
+                    return {
+                        ...prev,
+                        properties: [...prev.properties, ...value],
+                    };
+                });
+                break;
+            case 'salePrice':
+            case 'comparedPrice':
+                if (productInfo[prop] !== value) {
+                    setProductInfo((prev) => {
+                        return {
+                            ...prev,
+                            [prop]: value,
+                        };
+                    });
+                }
                 break;
             default:
                 if (productInfo[prop].localeCompare(value) !== 0) {
@@ -130,7 +153,10 @@ const CreateProduct = () => {
                                 initial={productInfo.baseUnit}
                                 handleChangeProductInfo={changeCreateProductInfo}
                             />
-                            <ProductProperties handleChangeProductInfo={changeCreateProductInfo} />
+                            <CreateProductProperties
+                                properties={productInfo.properties}
+                                handleChangeProductInfo={changeCreateProductInfo}
+                            />
                         </section>
                         {/* <section>
                             <div className="bg-white h-24 rounded-md border shadow-md"></div>

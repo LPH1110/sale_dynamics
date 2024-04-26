@@ -9,14 +9,14 @@ const ProductPrice = ({
     },
     title = 'Product price',
     formik,
-    handleChange,
+    handleChangeProductInfo,
 }) => {
     const [salePrice, setSalePrice] = useState(initial.salePrice);
     const [comparedPrice, setComparedPrice] = useState(initial.comparedPrice);
 
     const handleOnBlur = (propName, value) => {
         if (initial[propName] !== value) {
-            handleChange(propName, value);
+            handleChangeProductInfo(propName, value);
         }
     };
     return (

@@ -7,6 +7,7 @@ import { Modal } from '~/components';
 import { UserAuth } from '~/contexts/AuthContext/AuthProvider';
 import { PlusIcon, TrashIcon } from '~/icons';
 import { actions, useStore } from '~/store';
+import { authorizeAdmin, request } from '~/utils';
 
 const tableHeadings = [
     {
@@ -89,9 +90,9 @@ const Products = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const res = await axios.get(`${process.env.REACT_APP_SERVER_BASE}/products/get_all.php`);
-                if (res.data) {
-                    console.log(res.data);
+                const products = await request.get(`products`);
+                if (products) {
+                    console.log(products);
                 }
             } catch (error) {
                 console.log(error);
@@ -105,7 +106,7 @@ const Products = () => {
         <section className="p-4 space-y-4">
             <section className="bg-white rounded-sm border p-1.5 shadow-md">
                 <div className="flex items-center justify-start">
-                    {user?.isAdmin ? (
+                    {authorizeAdmin(user) ? (
                         <button
                             type="button"
                             onClick={() => {

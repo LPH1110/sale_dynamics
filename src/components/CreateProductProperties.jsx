@@ -1,17 +1,10 @@
 import { Transition } from '@headlessui/react';
 import React, { Fragment, useState } from 'react';
-import ProductProperty from './ProductProperty';
 import { PlusIcon } from '@heroicons/react/24/outline';
+import { CreateProductProperty } from '~/components';
 
-const propertyNames = ['materials', 'colors', 'size'];
-
-const ProductProperties = ({ handleChangeProductInfo }) => {
+const CreateProductProperties = ({ properties, handleChangeProductInfo }) => {
     const [showProperties, setShowProperties] = useState(false);
-    const [properties, setProperties] = useState({
-        [propertyNames[Math.floor(Math.random() * 3)]]: {
-            tags: ['sample tag'],
-        },
-    });
 
     const handleDeleteProperty = (propName) => {};
 
@@ -61,15 +54,14 @@ const ProductProperties = ({ handleChangeProductInfo }) => {
                         </div>
                         {/* Property blocks go here */}
                         <div className="space-y-6">
-                            {Object.entries(properties).map(([propName, value]) => {
+                            {properties.map((property) => {
                                 return (
-                                    <ProductProperty
+                                    <CreateProductProperty
                                         handleDeleteProperty={handleDeleteProperty}
                                         handleSaveProperty={handleSaveProperty}
                                         handleAddTag={handleAddTag}
                                         handleDeleteTag={handleDeleteTag}
-                                        propName={propName}
-                                        tags={value.tags}
+                                        property={property}
                                     />
                                 );
                             })}
@@ -91,4 +83,4 @@ const ProductProperties = ({ handleChangeProductInfo }) => {
     );
 };
 
-export default ProductProperties;
+export default CreateProductProperties;

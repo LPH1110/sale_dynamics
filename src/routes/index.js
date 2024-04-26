@@ -15,7 +15,7 @@ import {
 
 export const publicRoutes = [
     { path: '/', protected: true, page: UnderDevelopment, layout: MainLayout },
-    { path: '/change-password/:userId', page: ChangePassword, layout: WrapLayout },
+    { path: '/change-password/:username', protected: true, page: ChangePassword, layout: WrapLayout },
     { path: '/sign-in', page: Signin, layout: WrapLayout },
     { path: '/accounts', authority: 'admin', protected: true, page: Accounts, layout: MainLayout },
     { path: '/accounts/detail/:username', protected: true, page: AccountDetail, layout: MainLayout },

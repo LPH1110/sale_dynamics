@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Spinner } from '~/icons';
 import sendVerificationMail from '~/services/mail';
@@ -43,7 +43,9 @@ const ResendVerification = ({ setOpen }) => {
                 <p className="text-sm text-gray-600">Please confirm if you want to verify these user</p>
                 <ul className="text-sm text-blue-500">
                     {checkedRows.map((row) => (
-                        <li>{row.username}</li>
+                        <Fragment key={row.username}>
+                            <li>{row.username}</li>
+                        </Fragment>
                     ))}
                 </ul>
             </div>

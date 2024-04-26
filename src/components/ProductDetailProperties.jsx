@@ -1,8 +1,9 @@
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { Fragment, useEffect, useState } from 'react';
 import { actions, useStore } from '~/store';
-import ProductProperty from './ProductProperty';
+import ProductProperty from './ProductDetailProperty';
 import axios from 'axios';
+import ProductDetailProperty from './ProductDetailProperty';
 
 const ProductDetailProperties = ({ productDetail }) => {
     const [, dispatch] = useStore();
@@ -69,7 +70,7 @@ const ProductDetailProperties = ({ productDetail }) => {
                     {productDetail.properties.map((property, index) => {
                         return (
                             <Fragment key={index}>
-                                <ProductProperty
+                                <ProductDetailProperty
                                     index={index}
                                     handleDeleteProperty={handleDeleteProperty}
                                     handleSaveProperty={handleSaveProperty}
