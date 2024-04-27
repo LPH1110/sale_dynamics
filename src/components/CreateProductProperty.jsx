@@ -6,18 +6,73 @@ import Tooltip from './Tooltip';
 import { actions, useStore } from '~/store';
 import axios from 'axios';
 
-const CreateProductProperty = ({ index, property, handleSaveProperty, handleDeleteProperty }) => {
+const CreateProductProperty = ({ index, property, setProductInfo }) => {
     const [propName, setPropName] = useState(property.name);
     const [saved, setSaved] = useState(true);
     const addTagInput = useRef();
 
-    const handleDeleteTag = (index) => {};
+    const handleDeleteTag = (tagIndex) => {
+        setProductInfo((prev) => {
+            let newProperties = prev.properties;
+            newProperties[index].tags = newProperties[index].tags.filter((tag, index) => index !== tagIndex);
+            return { ...prev, properties: [...newProperties] };
+        });
+    };
 
-    const handleChangeTag = (index, value) => {};
+    const handleChangeTag = (tagIndex, value) => {
+        setProductInfo((prev) => {
+            if (prev.properties[index].tags[tagIndex].localeCompare(value) !== 0) {
+                let newProperties = prev.properties;
+                newProperties[index].tags[tagIndex] = value;
+                return { ...prev, properties: [...newProperties] };
+            }
+            return prev;
+        });
+    };
+
+    const handleDeleteProperty = (propIndex) => {
+        setProductInfo((prev) => {
+            let newProperties = prev.properties.filter((prop, index) => index !== propIndex);
+            return {
+                ...prev,
+                properties: [...newProperties],
+            };
+        });
+        setSaved(true);
+    };
+
+    const handleChangePropertyName = (value) => {
+        setProductInfo((prev) => {
+            if (prev.properties[index].name.localeCompare(value) !== 0) {
+                let newProperties = prev.properties;
+                newProperties[index].name = value;
+                return {
+                    ...prev,
+                    properties: [...newProperties],
+                };
+            }
+            return prev;
+        });
+    };
+
+    const handleAddTag = (value) => {
+        if (value !== '') {
+            setProductInfo((prev) => {
+                let newProperties = prev.properties;
+                newProperties[index].tags = [...newProperties[index].tags, value];
+                return {
+                    ...prev,
+                    properties: [...newProperties],
+                };
+            });
+            addTagInput.current.value = '';
+            addTagInput.current.focus();
+        }
+    };
 
     return saved ? (
         <Fragment key={propName}>
-            <ProductSavedProperty propertyName={propName} tags={property.tags} setSaved={setSaved} />
+            <ProductSavedProperty propertyName={property.name} tags={property.tags} setSaved={setSaved} />
         </Fragment>
     ) : (
         <Fragment key={propName}>
@@ -27,8 +82,8 @@ const CreateProductProperty = ({ index, property, handleSaveProperty, handleDele
                         id={propName}
                         name={propName}
                         type="text"
-                        value={propName}
-                        onChange={(e) => setPropName(e.target.value)}
+                        defaultValue={property.name}
+                        onBlur={(e) => handleChangePropertyName(e.target.value)}
                         autoComplete="off"
                         className="border w-full p-2 rounded-sm ring-2 ring-transparent focus-within:ring-blue-400 transition"
                     />
@@ -63,6 +118,7 @@ const CreateProductProperty = ({ index, property, handleSaveProperty, handleDele
                             placeholder="Enter new tag"
                             autoComplete="off"
                             ref={addTagInput}
+                            onBlur={(e) => handleAddTag(e.target.value)}
                             className="w-full border p-2 rounded-sm ring-2 ring-transparent focus-within:ring-blue-400 transition"
                         />
                         <div className="w-4 h-4"></div>
@@ -75,6 +131,7 @@ const CreateProductProperty = ({ index, property, handleSaveProperty, handleDele
                 <div className="col-span-2">
                     <button
                         type="button"
+                        onClick={() => setSaved(true)}
                         className="py-2 px-4 border border-blue-500 text-blue-500 rounded-md text-sm hover:bg-blue-500 hover:text-white transition"
                     >
                         Save
@@ -85,4 +142,4 @@ const CreateProductProperty = ({ index, property, handleSaveProperty, handleDele
     );
 };
 
-export default memo(CreateProductProperty);
+export default CreateProductProperty;

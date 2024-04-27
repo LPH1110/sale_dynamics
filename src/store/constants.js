@@ -30,3 +30,5 @@ export const sampleProductDetail = {
     ],
     variants: [1, 2, 3],
 };
+
+export const propertyNames = ['materials', 'colors', 'size'];

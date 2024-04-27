@@ -1,20 +1,23 @@
 import { Transition } from '@headlessui/react';
-import React, { Fragment, useState } from 'react';
 import { PlusIcon } from '@heroicons/react/24/outline';
+import { Fragment, useState } from 'react';
 import { CreateProductProperty } from '~/components';
 
-const CreateProductProperties = ({ properties, handleChangeProductInfo }) => {
+const CreateProductProperties = ({ properties, setProductInfo }) => {
     const [showProperties, setShowProperties] = useState(false);
 
-    const handleDeleteProperty = (propName) => {};
-
-    const handleAddProperty = () => {};
-
-    const handleSaveProperty = (oldPropName, newName, tags) => {};
-
-    const handleAddTag = (propName, tag) => {};
-
-    const handleDeleteTag = (propName, targetTag) => {};
+    const handleAddProperty = () => {
+        setProductInfo((prev) => ({
+            ...prev,
+            properties: [
+                ...prev.properties,
+                {
+                    name: 'Sample title',
+                    tags: [],
+                },
+            ],
+        }));
+    };
 
     return (
         <section className="w-full bg-white rounded-sm shadow-md border p-4">
@@ -27,7 +30,7 @@ const CreateProductProperties = ({ properties, handleChangeProductInfo }) => {
             <div className="space-y-4">
                 <div className="flex items-center gap-2">
                     <input
-                        onChange={() => setShowProperties((prev) => !prev)}
+                        onChange={(e) => setShowProperties(!showProperties)}
                         type="checkbox"
                         name="propertycb"
                         id="propertycb"
@@ -54,20 +57,18 @@ const CreateProductProperties = ({ properties, handleChangeProductInfo }) => {
                         </div>
                         {/* Property blocks go here */}
                         <div className="space-y-6">
-                            {properties.map((property) => {
+                            {properties.map((property, index) => {
                                 return (
                                     <CreateProductProperty
-                                        handleDeleteProperty={handleDeleteProperty}
-                                        handleSaveProperty={handleSaveProperty}
-                                        handleAddTag={handleAddTag}
-                                        handleDeleteTag={handleDeleteTag}
+                                        index={index}
                                         property={property}
+                                        setProductInfo={setProductInfo}
                                     />
                                 );
                             })}
                         </div>
                         <div className="h-[1px] my-4 w-full bg-gray-100"></div>
-                        {Object.keys(properties).length < 3 && (
+                        {properties.length < 3 && (
                             <button
                                 type="button"
                                 onClick={handleAddProperty}

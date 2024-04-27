@@ -13,9 +13,8 @@ import {
     Modal,
     ProductPrice,
 } from '~/components';
+import { propertyNames } from '~/store/constants';
 import { request } from '~/utils';
-
-const propertyNames = ['materials', 'colors', 'size'];
 
 const CreateProduct = () => {
     const [productInfo, setProductInfo] = useState({
@@ -31,7 +30,7 @@ const CreateProduct = () => {
         baseUnit: '',
         properties: [
             {
-                name: propertyNames[Math.random() * 3],
+                name: propertyNames[Math.floor(Math.random() * propertyNames.length)],
                 tags: ['Sample tag'],
             },
         ],
@@ -62,19 +61,6 @@ const CreateProduct = () => {
                 .moreThan(productInfo.salePrice, 'Amount must be higher than sale price'),
             barcode: Yup.string().required('Barcode is required'),
         }),
-        onSubmit: async () => {
-            try {
-                setIsLoading(true);
-                const res = await request.post('products/save', JSON.stringify(productInfo));
-                toast.success('Create new product successfully');
-                console.log(res);
-                // navigate(`/products/detail/${productInfo.barcode}`);
-            } catch (error) {
-                toast.error('Failed to create product');
-            } finally {
-                setIsLoading(false);
-            }
-        },
     });
 
     const changeCreateProductInfo = (prop, value) => {
@@ -121,8 +107,8 @@ const CreateProduct = () => {
 
     return (
         <section className="h-screen-content overflow-auto">
-            <form onSubmit={formik.handleSubmit} className="space-y-6 relative h-full">
-                <CreateProductHeader isLoading={isLoading} />
+            <form onSubmit={(e) => e.preventDefault()} className="space-y-6 relative h-full">
+                <CreateProductHeader productInfo={productInfo} />
                 <section className="flex items-center justify-center">
                     <section className="container grid grid-cols-4 px-4 gap-6">
                         <section className="space-y-4 col-span-3">
@@ -155,7 +141,7 @@ const CreateProduct = () => {
                             />
                             <CreateProductProperties
                                 properties={productInfo.properties}
-                                handleChangeProductInfo={changeCreateProductInfo}
+                                setProductInfo={setProductInfo}
                             />
                         </section>
                         {/* <section>
