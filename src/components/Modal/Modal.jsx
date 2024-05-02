@@ -1,4 +1,4 @@
-import { Fragment, useRef, useState } from 'react';
+import { Fragment, memo, useRef, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import CreateAccountModal from './CreateAccountModal';
 import ConfirmDeletionModal from './ConfirmDeletionModal';
@@ -7,20 +7,11 @@ import ConfirmCancelProductUpdates from './ConfirmCancelProductUpdates';
 import UpdateVariantThumb from './UpdateVariantThumb';
 import ResendVerification from './ResendVerification';
 
-export default function Modal({
-    setCreateVariantForm,
-    fetchProductDetail,
-    setCreateProductInfo,
-    tableName,
-    open,
-    setOpen,
-    action,
-    setAccounts,
-}) {
+function Modal({ setCreateVariantForm, fetchProductDetail, tableName, open, setOpen, action, setAccounts }) {
     const [dialogs] = useState({
         'create-account': <CreateAccountModal setAccounts={setAccounts} setOpen={setOpen} />,
         'confirm-delete': <ConfirmDeletionModal tableName={tableName} setOpen={setOpen} />,
-        'confirm-clear-image': <ConfirmClearImage setCreateProductInfo={setCreateProductInfo} setOpen={setOpen} />,
+        'confirm-clear-image': <ConfirmClearImage setOpen={setOpen} />,
         'confirm-cancel-product-updates': (
             <ConfirmCancelProductUpdates fetchProductDetail={fetchProductDetail} setOpen={setOpen} />
         ),
@@ -69,3 +60,5 @@ export default function Modal({
         </Transition.Root>
     );
 }
+
+export default memo(Modal);

@@ -1,58 +1,45 @@
 import { PlusIcon } from '@heroicons/react/24/outline';
-import { Fragment, useEffect, useState } from 'react';
-import { actions, useStore } from '~/store';
-import ProductProperty from './ProductDetailProperty';
-import axios from 'axios';
+import { Fragment, memo } from 'react';
 import ProductDetailProperty from './ProductDetailProperty';
 
-const ProductDetailProperties = ({ productDetail }) => {
-    const [, dispatch] = useStore();
-    const [properties, setProperties] = useState([]);
-
-    const handleDeleteProperty = (propIndex) => {
-        let next = productDetail.properties.filter((property, index) => index !== propIndex);
-        dispatch(actions.addProductChanges({ propName: 'properties', value: [...next] }));
-        dispatch(actions.setProductDetail({ properties: next }));
+const ProductDetailProperties = ({ productDetail, setProductDetail, setProductChanged }) => {
+    const handleDeleteProperty = (propName) => {
+        setProductDetail((prev) => {
+            let next = prev.properties.filter((property) => property?.name.localeCompare(propName) !== 0);
+            return {
+                ...prev,
+                properties: next,
+            };
+        });
+        setProductChanged(true);
     };
 
     const handleAddProperty = () => {
-        if (productDetail.properties.length < 3) {
-            let sampleName = 'Sample title';
-            let newProperty = { name: sampleName, tags: ['sample tag'] };
-            let next = [...productDetail.properties, newProperty];
-            dispatch(
-                actions.addProductChanges({
-                    propName: 'properties',
-                    value: [...productDetail.properties, newProperty],
-                }),
-            );
-            dispatch(actions.setProductDetail({ properties: next }));
+        if (productDetail?.properties.length < 3) {
+            setProductDetail((prev) => {
+                let sampleName = 'Sample title';
+                let newProperty = { name: sampleName, tags: ['sample tag'] };
+                let next = [...prev.properties, newProperty];
+                return {
+                    ...prev,
+                    properties: next,
+                };
+            });
+            setProductChanged(true);
         }
     };
 
     const handleSaveProperty = (index, newName, tags) => {
-        let next = [...productDetail.properties];
-        next[index] = { name: newName, tags: tags };
-        dispatch(actions.addProductChanges({ propName: 'properties', value: next }));
-        dispatch(actions.setProductDetail({ properties: next }));
+        setProductDetail((prev) => {
+            let next = [...prev.properties];
+            next[index] = { name: newName, tags: tags };
+            return {
+                ...prev,
+                properties: next,
+            };
+        });
+        setProductChanged(true);
     };
-
-    useEffect(() => {
-        const fetchProperties = async () => {
-            try {
-                const res = await axios.get(
-                    `${process.env.REACT_APP_SERVER_BASE}/properties/get_by_product_id.php?product_id=${productDetail.product_id}`,
-                );
-                if (res.data) {
-                    setProperties(res.data);
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        };
-
-        // fetchProperties()
-    }, []);
 
     return (
         <section className="w-full bg-white rounded-sm shadow-md border p-4">
@@ -67,22 +54,23 @@ const ProductDetailProperties = ({ productDetail }) => {
             <div className="space-y-4">
                 {/* Property blocks go here */}
                 <div className="space-y-6">
-                    {productDetail.properties.map((property, index) => {
+                    {productDetail?.properties.map((property, index) => {
                         return (
                             <Fragment key={index}>
                                 <ProductDetailProperty
                                     index={index}
                                     handleDeleteProperty={handleDeleteProperty}
                                     handleSaveProperty={handleSaveProperty}
-                                    propertyName={property.name}
-                                    tags={property.tags}
+                                    property={property}
+                                    setProductDetail={setProductDetail}
+                                    setProductChanged={setProductChanged}
                                 />
                             </Fragment>
                         );
                     })}
                 </div>
                 <div className="h-[1px] my-4 w-full bg-gray-100"></div>
-                {productDetail.properties.length < 3 && (
+                {productDetail?.properties.length < 3 && (
                     <button
                         type="button"
                         onClick={handleAddProperty}
@@ -96,4 +84,4 @@ const ProductDetailProperties = ({ productDetail }) => {
     );
 };
 
-export default ProductDetailProperties;
+export default memo(ProductDetailProperties);

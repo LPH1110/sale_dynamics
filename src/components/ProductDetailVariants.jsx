@@ -1,8 +1,6 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import { ChevronDownIcon, PencilIcon, PhotoIcon } from '@heroicons/react/24/outline';
-import { actions, useStore } from '~/store';
-import axios from 'axios';
+import { Fragment, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const VariantRow = ({ data }) => {
     return (
@@ -28,26 +26,6 @@ const VariantRow = ({ data }) => {
 
 const ProductDetailVariants = ({ productId, setOpenModal, setModalAction }) => {
     const [variants, setVariants] = useState([1, 2, 3]);
-    const [state, dispatch] = useStore();
-    const { productChanges } = state;
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        const fetchVariants = async () => {
-            try {
-                const res = await axios.get(
-                    `${process.env.REACT_APP_SERVER_BASE}/variants/get_by_product_id.php?product_id=${productId}`,
-                );
-                if (res.data) {
-                    setVariants(res.data);
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        };
-
-        // fetchVariants()
-    }, []);
 
     return (
         <section className="w-full bg-white rounded-sm shadow-md border p-4">
@@ -55,19 +33,7 @@ const ProductDetailVariants = ({ productId, setOpenModal, setModalAction }) => {
                 <label className="font-semibold block text-sm text-gray-600" htmlFor="thumbnails">
                     Variants
                 </label>
-                <button
-                    type="button"
-                    className="text-sm hover:underline font-semibold text-blue-500 transition"
-                    onClick={() => {
-                        if (Object.keys(productChanges).length > 0) {
-                            setModalAction('confirm-cancel-product-updates');
-                            setOpenModal(true);
-                            dispatch(actions.setCancelProductChangesOption(`/products/1/variant-new`));
-                        } else {
-                            navigate(`/products/1/variant-new`);
-                        }
-                    }}
-                >
+                <button type="button" className="text-sm hover:underline font-semibold text-blue-500 transition">
                     Add new variant
                 </button>
             </div>

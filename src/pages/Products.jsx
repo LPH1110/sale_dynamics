@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
-import { Modal } from '~/components';
+import { ImageWithFallback, Modal } from '~/components';
 import { UserAuth } from '~/contexts/AuthContext/AuthProvider';
 import { PlusIcon, TrashIcon } from '~/icons';
 import { actions, useStore } from '~/store';
@@ -38,12 +38,14 @@ const DataRow = ({ setCheckedRows, data }) => {
     const [checked, setChecked] = useState(false);
     const [, dispatch] = useStore();
 
+    console.log(data);
+
     const handleChecked = (e) => {
         setChecked(e.target.checked);
         if (e.target.checked) {
-            dispatch(actions.addCheckedRow(data.user_id));
+            dispatch(actions.addCheckedRow(data.barcode));
         } else {
-            dispatch(actions.deleteCheckedRow(data.user_id));
+            dispatch(actions.deleteCheckedRow(data.barcode));
         }
     };
 
@@ -61,18 +63,18 @@ const DataRow = ({ setCheckedRows, data }) => {
             <td className="flex items-center justify-start gap-2 text-sm p-3 hover:bg-gray-100 hover:underline">
                 <div className="rounded-sm">
                     <img
+                        src={data?.thumbnails?.length > 0 ? data.thumbnails[0].url : ''}
                         className="w-12 h-12 rounded-sm"
-                        src="https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/cd48b6755463484e8be63cbe08c435bf_9366/Giay_Samba_OG_mau_xanh_la_IG6175_01_standard.jpg"
                         alt="product-thumb"
                     />
                 </div>
-                <NavLink className="text-blue-500" to={`/products/detail/${data.productId}`}>
-                    Sample product name
+                <NavLink className="text-blue-500" to={`/products/detail/${data?.barcode}`}>
+                    {data?.name}
                 </NavLink>
             </td>
             <td className="text-sm p-3 hover:bg-gray-100">0 stock in 0 variant</td>
-            <td className="text-sm p-3 hover:bg-gray-100">shoes</td>
-            <td className="text-sm p-3 hover:bg-gray-100">Adidas</td>
+            <td className="text-sm p-3 hover:bg-gray-100">{data?.category}</td>
+            <td className="text-sm p-3 hover:bg-gray-100">{data?.provider}</td>
         </tr>
     );
 };
@@ -83,16 +85,18 @@ const Products = () => {
     const [modalAction, setModalAction] = useState('');
     const [checkedRows, setCheckedRows] = useState([]);
     const [checkAll, setCheckAll] = useState(false);
-    const [products, setProducts] = useState([1, 2, 3]);
+    const [products, setProducts] = useState([]);
     const navigate = useNavigate();
     const tableRef = useRef();
+
+    console.log(products);
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 const products = await request.get(`products`);
                 if (products) {
-                    console.log(products);
+                    setProducts(products);
                 }
             } catch (error) {
                 console.log(error);
@@ -190,9 +194,9 @@ const Products = () => {
                     </thead>
 
                     <tbody>
-                        {products.map((account) => (
-                            <Fragment key={account.userId}>
-                                <DataRow setCheckedRows={setCheckedRows} data={account} />
+                        {products.map((product) => (
+                            <Fragment key={product.product}>
+                                <DataRow setCheckedRows={setCheckedRows} data={product} />
                             </Fragment>
                         ))}
                     </tbody>

@@ -7,9 +7,8 @@ import {
     DELETE_CLEARED_IMAGE,
     ADD_PRODUCT_CHANGES,
     DELETE_PRODUCT_CHANGES,
-    SET_CANCEL_PRODUCT_CHANGES_OPTION,
-    CLEAR_CANCEL_PRODUCT_CHANGES_OPTION,
     SET_PRODUCT_DETAIL,
+    SET_CONFIRM_CLEAR_IMAGE,
 } from './constants';
 
 export const setProductDetail = (payload) => {
@@ -19,16 +18,9 @@ export const setProductDetail = (payload) => {
     };
 };
 
-export const clearCancelProductChangesOption = (payload) => {
+export const setConfirmClearImage = (payload) => {
     return {
-        type: CLEAR_CANCEL_PRODUCT_CHANGES_OPTION,
-        payload,
-    };
-};
-
-export const setCancelProductChangesOption = (payload) => {
-    return {
-        type: SET_CANCEL_PRODUCT_CHANGES_OPTION,
+        type: SET_CONFIRM_CLEAR_IMAGE,
         payload,
     };
 };

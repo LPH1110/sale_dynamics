@@ -5,7 +5,7 @@ import { Tooltip } from '~/components';
 import { QuestionMarkCircleIcon } from '~/icons';
 import { actions, useStore } from '~/store';
 
-const GalleryThumb = ({ clearImage, imageURL }) => {
+const GalleryThumb = ({ clearImage, index, imageURL }) => {
     return (
         <div className="bg-white relative text-center border rounded-sm">
             <div className="relative w-full  pb-[100%]">
@@ -19,7 +19,7 @@ const GalleryThumb = ({ clearImage, imageURL }) => {
                     </Tooltip>
                     <Tooltip placement="top" message="Clear this image">
                         <button
-                            onClick={() => clearImage(imageURL)}
+                            onClick={() => clearImage(index)}
                             type="button"
                             className="hover:text-gray-300 transition"
                         >
@@ -33,20 +33,25 @@ const GalleryThumb = ({ clearImage, imageURL }) => {
 };
 
 const Gallery = ({ clearImage, images = [] }) => {
-    const filterdImages = images.filter((url) => url !== images[0]);
+    const urls = images.map((file) => URL.createObjectURL(file));
+    const filterdImages = urls.filter((url) => url !== urls[0]);
     return (
         <section className="grid grid-cols-3 gap-3">
             {/* Main sector */}
             <section>
-                <GalleryThumb clearImage={clearImage} imageURL={images[0]} />
+                <GalleryThumb index={0} clearImage={clearImage} imageURL={urls[0]} />
             </section>
             {/* Others */}
             <section className="text-center col-span-2">
                 <div className="grid grid-cols-4 gap-3">
-                    {filterdImages.map((url) => {
+                    {filterdImages.map((url, index) => {
                         return (
                             <Fragment key={url}>
-                                <GalleryThumb clearImage={clearImage} imageURL={url} />
+                                <GalleryThumb
+                                    clearImage={clearImage}
+                                    index={index + 1}
+                                    imageURL={url}
+                                />
                             </Fragment>
                         );
                     })}
@@ -65,14 +70,14 @@ const CreateProductThumbnail = ({ initial, setOpenModal, setModalAction, handleC
     const [, dispatch] = useStore();
 
     const uploadImages = (e) => {
-        const urls = Object.entries(e.target.files).map(([index, file]) => URL.createObjectURL(file));
-        handleChangeProductInfo('thumbnails', urls);
+        handleChangeProductInfo('thumbnails', e.target.files);
     };
 
-    const clearImage = (imagePath) => {
+    const clearImage = (imageName) => {
+        console.log(imageName);
         setOpenModal(true);
         setModalAction('confirm-clear-image');
-        dispatch(actions.setClearedImage(imagePath));
+        dispatch(actions.setClearedImage(imageName));
     };
 
     return (

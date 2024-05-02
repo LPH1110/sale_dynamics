@@ -1,31 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Spinner } from '~/icons';
 import { actions, useStore } from '~/store';
 
-const ConfirmClearImage = ({ setCreateProductInfo, setOpen }) => {
+const ConfirmClearImage = ({ setOpen }) => {
     const [isLoading, setIsLoading] = useState(false);
-    const [state, dispatch] = useStore();
-    const { productDetail, clearedImage } = state;
+    const [, dispatch] = useStore();
 
     const handleClearImage = () => {
-        let newThumbnails;
         setIsLoading(true);
-        if (setCreateProductInfo) {
-            setCreateProductInfo((prev) => {
-                newThumbnails = prev.thumbnails.filter((thumb) => thumb !== clearedImage);
-                return {
-                    ...prev,
-                    thumbnails: [...newThumbnails],
-                };
-            });
-        } else {
-            // Product detail
-            newThumbnails = productDetail.thumbnails.filter((thumb) => thumb !== clearedImage);
-            dispatch(actions.addProductChanges({ propName: 'thumbnails', value: newThumbnails }));
-            dispatch(actions.setProductDetail({ thumbnails: newThumbnails }));
-        }
-        setIsLoading(false);
+        dispatch(actions.setConfirmClearImage(true));
         setOpen(false);
+        setIsLoading(false);
     };
 
     useEffect(() => {
@@ -62,4 +47,4 @@ const ConfirmClearImage = ({ setCreateProductInfo, setOpen }) => {
     );
 };
 
-export default ConfirmClearImage;
+export default memo(ConfirmClearImage);

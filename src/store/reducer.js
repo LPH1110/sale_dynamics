@@ -6,22 +6,26 @@ import {
     DELETE_CLEARED_IMAGE,
     ADD_PRODUCT_CHANGES,
     DELETE_PRODUCT_CHANGES,
-    SET_CANCEL_PRODUCT_CHANGES_OPTION,
-    CLEAR_CANCEL_PRODUCT_CHANGES_OPTION,
     SET_PRODUCT_DETAIL,
     sampleProductDetail,
+    SET_CONFIRM_CLEAR_IMAGE,
 } from './constants';
 
 const initState = {
     checkedRows: [],
     clearedImage: '',
     productChanges: {},
-    cancelPrdChangesOpt: '',
+    confirmedClearImage: false,
     productDetail: sampleProductDetail,
 };
 
 function reducer(state, action) {
     switch (action.type) {
+        case SET_CONFIRM_CLEAR_IMAGE:
+            return {
+                ...state,
+                confirmedClearImage: action.payload,
+            };
         case SET_PRODUCT_DETAIL:
             return {
                 ...state,
@@ -29,16 +33,6 @@ function reducer(state, action) {
                     ...state.productDetail,
                     ...action.payload,
                 },
-            };
-        case CLEAR_CANCEL_PRODUCT_CHANGES_OPTION:
-            return {
-                ...state,
-                cancelPrdChangesOpt: '',
-            };
-        case SET_CANCEL_PRODUCT_CHANGES_OPTION:
-            return {
-                ...state,
-                cancelPrdChangesOpt: action.payload,
             };
         case DELETE_PRODUCT_CHANGES:
             return {

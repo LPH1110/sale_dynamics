@@ -1,10 +1,8 @@
 import { TrashIcon } from '@heroicons/react/24/outline';
-import { Fragment, memo, useEffect, useRef, useState } from 'react';
+import { Fragment, useRef, useState } from 'react';
 import { ProductSavedProperty } from '~/components';
 import ProductPropertyTag from './ProductPropertyTag';
 import Tooltip from './Tooltip';
-import { actions, useStore } from '~/store';
-import axios from 'axios';
 
 const CreateProductProperty = ({ index, property, setProductInfo }) => {
     const [propName, setPropName] = useState(property.name);

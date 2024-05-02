@@ -1,5 +1,6 @@
 import { Transition } from '@headlessui/react';
 import { ChevronRightIcon } from '@heroicons/react/24/outline';
+import axios from 'axios';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
@@ -9,50 +10,66 @@ import {
     ProductDetailVariants,
     ProductThumbnail,
 } from '~/components';
+import { Spinner } from '~/icons';
+import { productService } from '~/services';
+import fetchProductDetail from '~/services/products/fetchProductDetail';
 import { actions, useStore } from '~/store';
-import { sampleProductDetail } from '~/store/constants';
 
 const ProductDetail = () => {
-    const { productId } = useParams();
+    const { barcode } = useParams();
     const [openModal, setOpenModal] = useState(false);
     const [modalAction, setModalAction] = useState('');
-    const [state, dispatch] = useStore();
-    const { productChanges, productDetail } = state;
-    const productNameRef = useRef();
+    const [productDetail, setProductDetail] = useState(null);
+    const [productChanged, setProductChanged] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [, dispatch] = useStore();
 
-    const fetchProductDetail = () => {
-        try {
-            // const res = await axios.get(
-            //     `${process.env.REACT_APP_SERVER_BASE}/products/get_by_id.php?productId=${productId}`,
-            // );
-            dispatch(actions.setProductDetail(sampleProductDetail));
-            console.log('fetch product detail');
-            if (productNameRef.current) {
-                productNameRef.current.value = sampleProductDetail.name;
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
+    const productNameRef = useRef();
+    const formRef = useRef();
+
+    const handleUpdate = () => {};
 
     useEffect(() => {
-        fetchProductDetail();
+        const getProductDetail = async () => {
+            const detail = await fetchProductDetail(barcode);
+            setProductDetail(detail);
+        };
+
+        getProductDetail();
 
         return () => {
-            if (Object.keys(productChanges).length > 0) {
-                setModalAction('confirm-cancel-product-updates');
-                setOpenModal(true);
-                dispatch(actions.deleteProductChanges());
-            }
-            dispatch(actions.setProductDetail(sampleProductDetail));
+            dispatch(actions.setConfirmClearImage(false));
         };
-    }, [productId]);
+    }, [barcode]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+
+        const newProductDetail = Object.keys(productDetail).reduce((acc, key) => {
+            if (e.target[key]) {
+                return {
+                    ...acc,
+                    [key]: e.target[key].value,
+                };
+            } else {
+                return { ...acc };
+            }
+        }, {});
+
+        const data = { ...productDetail, ...newProductDetail };
+        const saved = await productService.saveProduct(data);
+
+        setIsLoading(false);
+        setProductChanged(false);
+        setProductDetail(saved);
+    };
 
     return (
-        <section className="relative h-screen-content overflow-auto">
+        <form onSubmit={handleSubmit} className="relative h-screen-content overflow-auto">
             <Transition
                 as={Fragment}
-                show={Object.keys(productChanges).length > 0}
+                show={productChanged}
                 enter="ease-out duration-300"
                 enterFrom="opacity-0"
                 enterTo="opacity-100"
@@ -75,15 +92,11 @@ const ProductDetail = () => {
                                 Cancel
                             </button>
                             <button
-                                type="button"
-                                onClick={() => {
-                                    console.log(productChanges);
-                                    dispatch(actions.setProductDetail(productChanges));
-                                    dispatch(actions.deleteProductChanges());
-                                }}
-                                className="bg-blue-500 min-w-[4rem] hover:bg-blue-600 rounded-sm transition text-white font-semibold py-2 px-4"
+                                type="submit"
+                                onClick={handleUpdate}
+                                className="bg-blue-500 min-w-[4rem] flex items-center justify-center hover:bg-blue-600 rounded-sm transition text-white font-semibold py-2 px-4"
                             >
-                                Update
+                                {isLoading ? <Spinner /> : 'Update'}
                             </button>
                         </div>
                     </div>
@@ -104,32 +117,36 @@ const ProductDetail = () => {
                     </div>
                 </section>
                 <section>
-                    <h2 className="font-semibold text-xl">{productDetail.name}</h2>
+                    <h2 className="font-semibold text-xl">{productDetail?.name}</h2>
                 </section>
                 <section className="container grid grid-cols-4 gap-6">
                     <section className="space-y-4 col-span-3">
-                        <GeneralProductInfo ref={productNameRef} productDetail={productDetail} />
+                        <GeneralProductInfo
+                            ref={productNameRef}
+                            productDetail={productDetail}
+                            setProductChanged={setProductChanged}
+                        />
                         <ProductThumbnail
                             productDetail={productDetail}
+                            setProductDetail={setProductDetail}
                             setOpenModal={setOpenModal}
                             setModalAction={setModalAction}
                         />
-                        <ProductDetailProperties productDetail={productDetail} />
+                        <ProductDetailProperties
+                            productDetail={productDetail}
+                            setProductChanged={setProductChanged}
+                            setProductDetail={setProductDetail}
+                        />
                         <ProductDetailVariants
                             setModalAction={setModalAction}
                             setOpenModal={setOpenModal}
-                            productId={productId}
+                            productId={barcode}
                         />
                     </section>
                 </section>
             </section>
-            <Modal
-                fetchProductDetail={fetchProductDetail}
-                open={openModal}
-                setOpen={setOpenModal}
-                action={modalAction}
-            />
-        </section>
+            <Modal productDetail={productDetail} open={openModal} setOpen={setOpenModal} action={modalAction} />
+        </form>
     );
 };
 

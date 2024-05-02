@@ -22,7 +22,7 @@ export const publicRoutes = [
     { path: '/activation/:userId', page: Activation, layout: WrapLayout },
     { path: '/verify-account/:token', page: AccountVerification, layout: WrapLayout },
     { path: '/products', protected: true, page: Products, layout: MainLayout },
-    { path: '/products/detail/:productId', protected: true, page: ProductDetail, layout: MainLayout },
+    { path: '/products/detail/:barcode', protected: true, page: ProductDetail, layout: MainLayout },
     { path: '/products/create-product', protected: true, page: CreateProduct, layout: MainLayout },
     { path: '/products/:productId/variant-new', protected: true, page: CreateVariant, layout: MainLayout },
     { path: '/orders', authority: 'admin', protected: true, page: UnderDevelopment, layout: MainLayout },

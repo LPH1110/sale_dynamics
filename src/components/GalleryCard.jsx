@@ -2,21 +2,26 @@ import React, { Fragment } from 'react';
 import { GalleryThumb } from '~/components';
 
 const GalleryCard = ({ clearImage, images = [] }) => {
-    const filterdImages = images.filter((url) => url !== images[0]);
-
+    const firstImage = images[0];
+    const filteredImages = () => {
+        let temp = [...images];
+        temp.shift();
+        return temp;
+    };
     return (
         <section className="grid grid-cols-3 gap-3">
             {/* Main sector */}
             <section>
-                <GalleryThumb clearImage={clearImage} imageURL={images[0]} />
+                <GalleryThumb clearImage={clearImage} imageId={firstImage.id} imageURL={firstImage.url} />
             </section>
             {/* Others */}
             <section className="text-center col-span-2">
                 <div className="grid grid-cols-4 gap-3">
-                    {filterdImages.map((url) => {
+                    {filteredImages().map((image, index) => {
+                        // URL
                         return (
-                            <Fragment key={url}>
-                                <GalleryThumb clearImage={clearImage} imageURL={url} />
+                            <Fragment key={image.id}>
+                                <GalleryThumb clearImage={clearImage} imageId={image.id} imageURL={image.url} />
                             </Fragment>
                         );
                     })}

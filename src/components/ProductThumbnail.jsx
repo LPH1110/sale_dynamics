@@ -1,42 +1,56 @@
 import { PhotoIcon } from '@heroicons/react/24/outline';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { GalleryCard, Tooltip } from '~/components';
 import { QuestionMarkCircleIcon } from '~/icons';
+import { productService } from '~/services';
+import { fetchProductDetail } from '~/services/products';
+import saveProductThumbnail from '~/services/products/saveProductThumbnail';
 import { actions, useStore } from '~/store';
+import { setClearedImage } from '~/store/actions';
 
-const ProductThumbnail = ({ productDetail, setOpenModal, setModalAction }) => {
-    const [, dispatch] = useStore();
+const ProductThumbnail = ({ productDetail, setProductDetail, setOpenModal, setModalAction }) => {
+    const [state, dispatch] = useStore();
     const [thumbnails, setThumbnails] = useState([]);
+    const [clearedId, setClearedId] = useState();
 
-    const uploadImages = (e) => {
-        const urls = Object.entries(e.target.files).map(([index, file]) => URL.createObjectURL(file));
-        dispatch(actions.addProductChanges({ propName: 'thumbnails', value: [...productDetail.thumbnails, ...urls] }));
-        dispatch(actions.setProductDetail({ thumbnails: [...productDetail.thumbnails, ...urls] }));
-    };
-
-    const clearImage = (imagePath) => {
-        setOpenModal(true);
-        setModalAction('confirm-clear-image');
-        dispatch(actions.setClearedImage(imagePath));
+    const uploadImages = async (e) => {
+        let files = Array.from(e.target.files);
+        for (let i = 0; i < files.length; i++) {
+            let thumbnail = await saveProductThumbnail(productDetail.barcode, files[i]);
+            setThumbnails((prev) => [...prev, thumbnail]);
+        }
     };
 
     useEffect(() => {
-        const fetchThumbnails = async () => {
-            try {
-                const res = axios.get(
-                    `${process.env.REACT_APP_SERVER_BASE}/thumbnails?parent_id=${productDetail.product_id}`,
-                );
-                if (res.data) {
-                    setThumbnails(res.data);
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        };
+        if (productDetail !== null) {
+            setThumbnails(productDetail.thumbnails);
+        }
+    }, [productDetail]);
 
-        // fetchThumbnails()
-    }, []);
+    useEffect(() => {
+        const clearImage = async () => {
+            console.log(productDetail.barcode);
+            console.log(clearedId);
+            await productService.deleteProductThumbnail({
+                barcode: productDetail.barcode,
+                thumbnailId: clearedId,
+            });
+        };
+        if (state.confirmedClearImage) {
+            clearImage();
+            dispatch(actions.setConfirmClearImage(false));
+            setThumbnails((prev) => {
+                let next = prev.filter((thumbnail) => thumbnail.id !== clearedId);
+                return next;
+            });
+        }
+    }, [clearedId, state.confirmedClearImage, dispatch, productDetail]);
+
+    const handleClearImage = (imageId) => {
+        setClearedId(imageId);
+        setModalAction('confirm-clear-image');
+        setOpenModal(true);
+    };
 
     return (
         <section className="w-full bg-white rounded-sm shadow-md border p-4">
@@ -55,8 +69,8 @@ const ProductThumbnail = ({ productDetail, setOpenModal, setModalAction }) => {
             </div>
             <div className="h-[1px] my-4 w-full bg-gray-100"></div>
             <div>
-                {productDetail.thumbnails.length > 0 ? (
-                    <GalleryCard clearImage={clearImage} images={productDetail.thumbnails} />
+                {thumbnails.length > 0 ? (
+                    <GalleryCard clearImage={handleClearImage} images={thumbnails} />
                 ) : (
                     <label htmlFor="images">
                         <div className="text-blue-500 gap-2 flex flex-col items-center justify-center p-6 border border-dashed hover:bg-blue-50 transition cursor-pointer rounded-md text-center text-sm">
@@ -74,4 +88,4 @@ const ProductThumbnail = ({ productDetail, setOpenModal, setModalAction }) => {
     );
 };
 
-export default ProductThumbnail;
+export default memo(ProductThumbnail);

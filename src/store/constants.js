@@ -6,9 +6,8 @@ export const SET_CLEARED_IMAGE = 'set_cleared_image';
 export const DELETE_CLEARED_IMAGE = 'delete_cleared_image';
 export const ADD_PRODUCT_CHANGES = 'add_product_changes';
 export const DELETE_PRODUCT_CHANGES = 'delete_product_changes';
-export const SET_CANCEL_PRODUCT_CHANGES_OPTION = 'set_cancel_product_changes_option';
-export const CLEAR_CANCEL_PRODUCT_CHANGES_OPTION = 'clear_cancel_product_changes_option';
 export const SET_PRODUCT_DETAIL = 'set_product_detail';
+export const SET_CONFIRM_CLEAR_IMAGE = 'set_confirm_clear_image';
 
 export const sampleProductDetail = {
     productId: 1,

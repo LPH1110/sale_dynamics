@@ -3,22 +3,17 @@ import { Fragment, memo, useEffect, useRef, useState } from 'react';
 import { ProductSavedProperty } from '~/components';
 import ProductPropertyTag from './ProductPropertyTag';
 import Tooltip from './Tooltip';
-import { actions, useStore } from '~/store';
-import axios from 'axios';
 
-const ProductProperty = ({ index, tags, propertyName, handleSaveProperty, handleDeleteProperty }) => {
-    const [propName, setPropName] = useState(propertyName);
-    const [state, dispatch] = useStore();
-    const { productDetail } = state;
+const ProductProperty = ({
+    index,
+    property,
+    handleSaveProperty,
+    handleDeleteProperty,
+    setProductDetail,
+    setProductChanged,
+}) => {
     const [saved, setSaved] = useState(true);
     const addTagInput = useRef();
-    // const [tags, setTags] = useState([])
-
-    console.log(propertyName);
-
-    useEffect(() => {
-        setPropName(propertyName);
-    }, [propertyName]);
 
     const handleChangeNewTag = (e) => {
         let newTagInput = e.target;
@@ -30,60 +25,73 @@ const ProductProperty = ({ index, tags, propertyName, handleSaveProperty, handle
     };
 
     const handleChangeTag = (tagIndex, value) => {
-        let next = productDetail.properties;
-        next[index].tags[tagIndex] = value;
-        dispatch(actions.setProductDetail({ properties: next }));
+        setProductDetail((prev) => {
+            let next = prev.properties;
+            next[index].tags[tagIndex] = value;
+            return {
+                ...prev,
+                properties: next,
+            };
+        });
+        setProductChanged(true);
     };
 
     const handleAddTag = (newTag) => {
-        let next = productDetail.properties;
-        next[index].tags = [...next[index].tags, newTag];
-        dispatch(actions.setProductDetail({ properties: next }));
+        setProductDetail((prev) => {
+            let next = prev.properties;
+            next[index].tags = [...next[index].tags, newTag];
+            return {
+                ...prev,
+                properties: next,
+            };
+        });
+        setProductChanged(true);
     };
 
     const handleDeleteTag = (targetTag) => {
-        let next = productDetail.properties;
-        next[index].tags = next[index].tags.filter((tag) => tag !== targetTag);
-        dispatch(actions.setProductDetail({ properties: next }));
+        setProductDetail((prev) => {
+            let next = prev.properties;
+            next[index].tags = next[index].tags.filter((tag) => tag !== targetTag);
+            return {
+                ...prev,
+                properties: next,
+            };
+        });
+        setProductChanged(true);
     };
 
-    // useEffect(() => {
-    //     const fetchTags = async () => {
-    //         try {
-    //             const res = await axios.get(
-    //                 `${process.env.REACT_APP_SERVER_BASE}/tags/get_by_property_id.php?property_id=${property.id}`,
-    //             );
-    //             if (res.data) {
-    //                 setTags(res.data);
-    //             }
-    //         } catch (error) {
-    //             console.log(error);
-    //         }
-    //     };
-
-    //     fetchTags()
-    // }, []);
+    const handleChangePropertyName = (value) => {
+        setProductDetail((prev) => {
+            let next = prev.properties;
+            next[index].name = value;
+            return {
+                ...prev,
+                properties: next,
+            };
+        });
+        setProductChanged(true);
+    };
 
     return saved ? (
-        <Fragment key={propertyName}>
-            <ProductSavedProperty propertyName={propertyName} tags={tags} setSaved={setSaved} />
+        <Fragment key={property?.name}>
+            <ProductSavedProperty property={property} setSaved={setSaved} />
         </Fragment>
     ) : (
-        <Fragment key={propertyName}>
+        <Fragment key={property?.name}>
             <div className="grid grid-cols-4 gap-8">
                 <div className="flex items-start gap-3">
                     <input
-                        id={propertyName}
-                        name={propertyName}
+                        id={property?.name}
+                        name={property?.name}
                         type="text"
-                        value={propName}
-                        onChange={(e) => setPropName(e.target.value)}
+                        defaultValue={property?.name}
                         autoComplete="off"
+                        onBlur={(e) => handleChangePropertyName(e.target.value)}
                         className="border w-full p-2 rounded-sm ring-2 ring-transparent focus-within:ring-blue-400 transition"
                     />
                     <Tooltip placement="top" message="Delete this property">
                         <button
-                            onClick={() => handleDeleteProperty(index)}
+                            onClick={() => handleDeleteProperty(property?.name)}
                             type="button"
                             className="text-red-500 hover:bg-red-50 p-3 rounded-md"
                         >
@@ -92,7 +100,7 @@ const ProductProperty = ({ index, tags, propertyName, handleSaveProperty, handle
                     </Tooltip>
                 </div>
                 <div className="col-span-2 gap-4 flex flex-col">
-                    {tags.map((tag, index) => {
+                    {property?.tags.map((tag, index) => {
                         return (
                             <Fragment key={tag}>
                                 <ProductPropertyTag
@@ -112,7 +120,7 @@ const ProductProperty = ({ index, tags, propertyName, handleSaveProperty, handle
                             placeholder="Enter new tag"
                             autoComplete="off"
                             ref={addTagInput}
-                            onKeyUp={handleChangeNewTag}
+                            onBlur={handleChangeNewTag}
                             className="w-full border p-2 rounded-sm ring-2 ring-transparent focus-within:ring-blue-400 transition"
                         />
                         <div className="w-4 h-4"></div>
@@ -126,7 +134,7 @@ const ProductProperty = ({ index, tags, propertyName, handleSaveProperty, handle
                     <button
                         type="button"
                         onClick={() => {
-                            handleSaveProperty(index, propName, tags);
+                            handleSaveProperty(index, property?.name, property.tags);
                             console.log(addTagInput.current.value);
                             if (addTagInput.current.value !== '') {
                                 handleAddTag(addTagInput.current.value);

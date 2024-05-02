@@ -20,3 +20,4 @@ export { default as VariantListCard } from './VariantListCard';
 export { default as VariantInfoCard } from './VariantInfoCard';
 export { default as GalleryCard } from './GalleryCard';
 export { default as GalleryThumb } from './GalleryThumb';
+export { default as ImageWithFallback } from './ImageWithFallback';

@@ -36,10 +36,10 @@ const AccountVerification = () => {
             try {
                 setIsLoading(true);
                 const res = await axios.get(`${process.env.REACT_APP_SERVER_BASE}/auth/verify-user?token=${token}`);
-                if (res.data.localeCompare('activated')) {
+                if (res.data?.enabled) {
                     setVerified(true);
-                } else {
-                    toast.error(res);
+                } else if (res.data?.expired) {
+                    toast.error(res.data.message);
                 }
             } catch (error) {
                 console.error(error);
@@ -62,9 +62,9 @@ const AccountVerification = () => {
                 ) : (
                     <div className="flex items-center justify-center gap-2 flex-col">
                         <ExclamationTriangleIcon className="w-12 h-12 text-red-400" />
-                        <p className="text-sm text-gray-600 text-center px-6">
+                        <p className="text-sm text-gray-600 text-center px-8">
                             Invalid verification token. Please contact to your admin to re-send another verification
-                            mail
+                            mail. Or your token has been expired.
                         </p>
                     </div>
                 )}

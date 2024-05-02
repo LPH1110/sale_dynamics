@@ -31,4 +31,30 @@ export const post = async (path, params) => {
     return res.data;
 };
 
+export const remove = async (path, params) => {
+    let config = {
+        headers: {
+            Authorization: 'Bearer ' + window.localStorage.getItem('jwt'),
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+    };
+
+    const res = await request.delete(path, params, config);
+    return res.data;
+};
+
+export const update = async (path, params) => {
+    let config = {
+        headers: {
+            Authorization: 'Bearer ' + window.localStorage.getItem('jwt'),
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+    };
+
+    const res = await request.put(path, params, config);
+    return res.data;
+};
+
 export default request;

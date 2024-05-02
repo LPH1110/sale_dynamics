@@ -1,13 +1,13 @@
 import React from 'react';
 
-const ProductSavedProperty = ({ propertyName, tags, setSaved }) => {
+const ProductSavedProperty = ({ property, setSaved }) => {
     return (
         <div className="text-sm grid grid-cols-4">
             <div>
-                <h4 className="font-semibold">{propertyName}</h4>
+                <h4 className="font-semibold">{property?.name}</h4>
             </div>
             <div className="col-span-2 flex gap-2 flex-wrap">
-                {tags.map((tag) => (
+                {property?.tags.map((tag) => (
                     <span className="p-2 rounded-md bg-gray-100">{tag}</span>
                 ))}
             </div>

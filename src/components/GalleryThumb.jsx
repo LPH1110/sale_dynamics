@@ -1,7 +1,7 @@
 import { EyeIcon, TrashIcon } from '@heroicons/react/24/solid';
 import { Tooltip } from '~/components';
 
-const GalleryThumb = ({ clearImage, imageURL }) => {
+const GalleryThumb = ({ clearImage, imageId, imageURL }) => {
     return (
         <div className="bg-white relative text-center border rounded-sm">
             <div className="relative w-full  pb-[100%]">
@@ -15,7 +15,7 @@ const GalleryThumb = ({ clearImage, imageURL }) => {
                     </Tooltip>
                     <Tooltip placement="top" message="Clear this image">
                         <button
-                            onClick={() => clearImage(imageURL)}
+                            onClick={() => clearImage(imageId)}
                             type="button"
                             className="hover:text-gray-300 transition"
                         >
