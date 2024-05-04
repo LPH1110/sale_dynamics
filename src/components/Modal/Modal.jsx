@@ -6,6 +6,9 @@ import ConfirmClearImage from './ConfirmClearImage';
 import ConfirmCancelProductUpdates from './ConfirmCancelProductUpdates';
 import UpdateVariantThumb from './UpdateVariantThumb';
 import ResendVerification from './ResendVerification';
+import ProductSearch from './ProductSearch';
+import CreateCustomerModal from './CreateCustomerModal';
+import OrderPaymentModal from './OrderPaymentModal';
 
 function Modal({ setCreateVariantForm, fetchProductDetail, tableName, open, setOpen, action, setAccounts }) {
     const [dialogs] = useState({
@@ -18,6 +21,9 @@ function Modal({ setCreateVariantForm, fetchProductDetail, tableName, open, setO
         'update-variant-thumb': <UpdateVariantThumb setOpen={setOpen} setCreateVariantForm={setCreateVariantForm} />,
         'confirm-cancel-create-variant': <div>Cancel create variant</div>,
         'resend-verification': <ResendVerification setOpen={setOpen} />,
+        'product-search': <ProductSearch setOpen={setOpen} />,
+        'create-customer': <CreateCustomerModal setOpen={setOpen} />,
+        'order-payment': <OrderPaymentModal setOpen={setOpen} />,
     });
 
     const cancelButtonRef = useRef(null);
@@ -49,7 +55,7 @@ function Modal({ setCreateVariantForm, fetchProductDetail, tableName, open, setO
                             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                         >
                             <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                                <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4 w-full">
+                                <div className="bg-white py-4 pb-4 pt-5 sm:pb-4 w-full">
                                     <div className="sm:flex sm:items-start">{dialogs[action]}</div>
                                 </div>
                             </Dialog.Panel>

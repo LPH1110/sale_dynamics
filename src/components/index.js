@@ -21,3 +21,5 @@ export { default as VariantInfoCard } from './VariantInfoCard';
 export { default as GalleryCard } from './GalleryCard';
 export { default as GalleryThumb } from './GalleryThumb';
 export { default as ImageWithFallback } from './ImageWithFallback';
+export { default as CustomerCard } from './CustomerCard';
+export { default as OrderConfirmCard } from './OrderConfirmCard';

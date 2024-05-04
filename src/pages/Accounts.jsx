@@ -1,14 +1,13 @@
-import axios from 'axios';
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
 import { Modal } from '~/components';
 import { EnvelopeIcon, PlusIcon, TrashIcon } from '~/icons';
-import { actions, useStore } from '~/store';
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import { authorizeAdmin, request } from '~/utils';
 import { userService } from '~/services';
-import { toast } from 'react-toastify';
+import { actions, useStore } from '~/store';
+import { authorizeAdmin } from '~/utils';
 
 const tableHeadings = [
     {
