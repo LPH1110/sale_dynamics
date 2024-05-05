@@ -1,6 +1,6 @@
 import { PhotoIcon } from '@heroicons/react/24/outline';
 import { EyeIcon, TrashIcon } from '@heroicons/react/24/solid';
-import { Fragment } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Tooltip } from '~/components';
 import { QuestionMarkCircleIcon } from '~/icons';
 import { actions, useStore } from '~/store';
@@ -35,6 +35,7 @@ const GalleryThumb = ({ clearImage, index, imageURL }) => {
 const Gallery = ({ clearImage, images = [] }) => {
     const urls = images.map((file) => URL.createObjectURL(file));
     const filterdImages = urls.filter((url) => url !== urls[0]);
+
     return (
         <section className="grid grid-cols-3 gap-3">
             {/* Main sector */}
@@ -47,11 +48,7 @@ const Gallery = ({ clearImage, images = [] }) => {
                     {filterdImages.map((url, index) => {
                         return (
                             <Fragment key={url}>
-                                <GalleryThumb
-                                    clearImage={clearImage}
-                                    index={index + 1}
-                                    imageURL={url}
-                                />
+                                <GalleryThumb clearImage={clearImage} index={index + 1} imageURL={url} />
                             </Fragment>
                         );
                     })}
@@ -66,19 +63,38 @@ const Gallery = ({ clearImage, images = [] }) => {
     );
 };
 
-const CreateProductThumbnail = ({ initial, setOpenModal, setModalAction, handleChangeProductInfo }) => {
-    const [, dispatch] = useStore();
+const CreateProductThumbnail = ({ productDetail, setProductDetail, setModal }) => {
+    const [state, dispatch] = useStore();
+    const [clearedIndex, setClearIndex] = useState();
 
     const uploadImages = (e) => {
-        handleChangeProductInfo('thumbnails', e.target.files);
+        console.log(e.target.files);
+        setProductDetail((prev) => ({
+            ...prev,
+            thumbnails: [...prev.thumbnails, ...Array.from(e.target.files)],
+        }));
     };
 
-    const clearImage = (imageName) => {
-        console.log(imageName);
-        setOpenModal(true);
-        setModalAction('confirm-clear-image');
-        dispatch(actions.setClearedImage(imageName));
+    const clearImage = (index) => {
+        setClearIndex(index);
+        setModal({
+            action: 'confirm-clear-image',
+            open: true,
+        });
     };
+
+    useEffect(() => {
+        if (state.confirmedClearImage) {
+            dispatch(actions.setConfirmClearImage(false));
+            setProductDetail((prev) => {
+                let next = prev.thumbnails.filter((thumbnail, index) => index !== clearedIndex);
+                return {
+                    ...prev,
+                    thumbnails: next,
+                };
+            });
+        }
+    }, [clearedIndex, dispatch, setProductDetail, state.confirmedClearImage]);
 
     return (
         <section className="w-full bg-white rounded-sm shadow-md border p-4">
@@ -97,8 +113,8 @@ const CreateProductThumbnail = ({ initial, setOpenModal, setModalAction, handleC
             </div>
             <div className="h-[1px] my-4 w-full bg-gray-100"></div>
             <div>
-                {initial.length > 0 ? (
-                    <Gallery clearImage={clearImage} images={initial} />
+                {productDetail?.thumbnails.length > 0 ? (
+                    <Gallery clearImage={clearImage} images={productDetail?.thumbnails} />
                 ) : (
                     <label htmlFor="images">
                         <div className="text-blue-500 gap-2 flex flex-col items-center justify-center p-6 border border-dashed hover:bg-blue-50 transition cursor-pointer rounded-md text-center text-sm">

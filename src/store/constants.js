@@ -10,7 +10,7 @@ export const SET_PRODUCT_DETAIL = 'set_product_detail';
 export const SET_CONFIRM_CLEAR_IMAGE = 'set_confirm_clear_image';
 
 export const sampleProductDetail = {
-    productId: 1,
+    id: 0,
     name: 'Sample name',
     provider: 'default',
     category: 'default',

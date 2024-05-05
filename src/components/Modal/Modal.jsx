@@ -8,6 +8,7 @@ import UpdateVariantThumb from './UpdateVariantThumb';
 import ResendVerification from './ResendVerification';
 import ProductSearch from './ProductSearch';
 import CreateCustomerModal from './CreateCustomerModal';
+import CreateOrderModal from './CreateOrderModal';
 import OrderPaymentModal from './OrderPaymentModal';
 
 function Modal({ setCreateVariantForm, fetchProductDetail, tableName, open, setOpen, action, setAccounts }) {
@@ -23,6 +24,7 @@ function Modal({ setCreateVariantForm, fetchProductDetail, tableName, open, setO
         'resend-verification': <ResendVerification setOpen={setOpen} />,
         'product-search': <ProductSearch setOpen={setOpen} />,
         'create-customer': <CreateCustomerModal setOpen={setOpen} />,
+        'create-order': <CreateOrderModal setOpen={setOpen} />,
         'order-payment': <OrderPaymentModal setOpen={setOpen} />,
     });
 

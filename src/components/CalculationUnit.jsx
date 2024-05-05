@@ -3,11 +3,14 @@ import { Fragment, useState } from 'react';
 import { Tooltip } from '~/components';
 import { QuestionMarkCircleIcon } from '~/icons';
 
-const CalculationUnit = ({ initial = '', handleChangeProductInfo }) => {
+const CalculationUnit = ({ productDetail, setProductDetail }) => {
     const [showBaseUnit, setShowBaseUnit] = useState(false);
-    const handleOnBlur = (propName, value) => {
-        if (initial.localeCompare(value) !== 0) {
-            handleChangeProductInfo(propName, value);
+    const handleChange = (propName, value) => {
+        if (productDetail[propName].localeCompare(value) !== 0) {
+            setProductDetail((prev) => ({
+                ...prev,
+                [propName]: value,
+            }));
         }
     };
     return (
@@ -59,7 +62,8 @@ const CalculationUnit = ({ initial = '', handleChangeProductInfo }) => {
                                 placeholder="Enter base unit"
                                 name="baseUnit"
                                 id="baseUnit"
-                                onBlur={(e) => handleOnBlur('baseUnit', e.target.value)}
+                                defaultValue={productDetail?.baseUnit}
+                                onBlur={(e) => handleChange('baseUnit', e.target.value)}
                             />
                         </div>
                     </div>

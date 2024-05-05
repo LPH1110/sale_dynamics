@@ -1,29 +1,21 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Tooltip } from '~/components';
 import { QuestionMarkCircleIcon } from '~/icons';
 
-const ProductPrice = ({
-    initial = {
-        salePrice: 0,
-        comparedPrice: 0,
-    },
-    title = 'Product price',
-    formik,
-    handleChangeProductInfo,
-}) => {
-    const [salePrice, setSalePrice] = useState(initial.salePrice);
-    const [comparedPrice, setComparedPrice] = useState(initial.comparedPrice);
-
-    const handleOnBlur = (propName, value) => {
-        if (initial[propName] !== value) {
-            handleChangeProductInfo(propName, value);
+const ProductPrice = ({ productDetail, setProductDetail }) => {
+    const handleChange = (propName, value) => {
+        if (Number(value) && productDetail[propName] !== Number(value)) {
+            setProductDetail((prev) => ({
+                ...prev,
+                [propName]: Number(value),
+            }));
         }
     };
     return (
         <section className="w-full bg-white rounded-sm shadow-md border p-4">
             <div className="flex gap-2 items-center">
                 <label className="font-semibold block text-sm text-gray-600" htmlFor="thumbnails">
-                    {title}
+                    Price
                 </label>
             </div>
             <div className="h-[1px] my-4 w-full bg-gray-100"></div>
@@ -41,33 +33,15 @@ const ProductPrice = ({
                     </div>
 
                     <div className="space-y-2 ">
-                        {formik ? (
-                            <input
-                                onBlur={(e) => handleOnBlur('salePrice', Number(e.target.value.replaceAll(' ', '')))}
-                                className="w-full border p-2 rounded-sm ring-2 ring-transparent focus:ring-blue-400 transition"
-                                type="text"
-                                name="salePrice"
-                                id="salePrice"
-                                autoComplete="off"
-                                onChange={formik?.handleChange}
-                                value={formik?.values.salePrice}
-                            />
-                        ) : (
-                            <input
-                                onBlur={(e) => handleOnBlur('salePrice', Number(e.target.value.replaceAll(' ', '')))}
-                                className="w-full border p-2 rounded-sm ring-2 ring-transparent focus:ring-blue-400 transition"
-                                type="text"
-                                name="salePrice"
-                                id="salePrice"
-                                value={salePrice}
-                                onChange={(e) => setSalePrice(e.target.value)}
-                                autoComplete="off"
-                            />
-                        )}
-
-                        {formik?.errors.salePrice ? (
-                            <div className="text-sm text-red-500">{formik.errors.salePrice}</div>
-                        ) : null}
+                        <input
+                            className="w-full border p-2 rounded-sm ring-2 ring-transparent focus:ring-blue-400 transition"
+                            type="text"
+                            name="salePrice"
+                            id="salePrice"
+                            defaultValue={productDetail?.salePrice}
+                            onBlur={(e) => handleChange('salePrice', e.target.value)}
+                            autoComplete="off"
+                        />
                     </div>
                 </div>
                 <div className="space-y-2 w-full">
@@ -86,37 +60,15 @@ const ProductPrice = ({
                     </div>
 
                     <div className="space-y-2">
-                        {formik ? (
-                            <input
-                                onBlur={(e) =>
-                                    handleOnBlur('comparedPrice', Number(e.target.value.replaceAll(' ', '')))
-                                }
-                                className="w-full border p-2 rounded-sm ring-2 ring-transparent focus:ring-blue-400 transition"
-                                type="text"
-                                name="comparedPrice"
-                                id="comparedPrice"
-                                autoComplete="off"
-                                onChange={formik.handleChange}
-                                value={formik.values.comparedPrice}
-                            />
-                        ) : (
-                            <input
-                                onBlur={(e) =>
-                                    handleOnBlur('comparedPrice', Number(e.target.value.replaceAll(' ', '')))
-                                }
-                                className="w-full border p-2 rounded-sm ring-2 ring-transparent focus:ring-blue-400 transition"
-                                type="text"
-                                name="comparedPrice"
-                                id="comparedPrice"
-                                autoComplete="off"
-                                value={comparedPrice}
-                                onChange={(e) => setComparedPrice(e.target.value)}
-                            />
-                        )}
-
-                        {formik?.errors.comparedPrice ? (
-                            <div className="text-sm text-red-500">{formik.errors.comparedPrice}</div>
-                        ) : null}
+                        <input
+                            className="w-full border p-2 rounded-sm ring-2 ring-transparent focus:ring-blue-400 transition"
+                            type="text"
+                            name="comparedPrice"
+                            id="comparedPrice"
+                            autoComplete="off"
+                            defaultValue={productDetail?.comparedPrice}
+                            onBlur={(e) => handleChange('comparedPrice', e.target.value)}
+                        />
                     </div>
                 </div>
             </div>

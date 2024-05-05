@@ -195,7 +195,7 @@ const Products = () => {
 
                     <tbody>
                         {products.map((product) => (
-                            <Fragment key={product.product}>
+                            <Fragment key={product.barcode}>
                                 <DataRow setCheckedRows={setCheckedRows} data={product} />
                             </Fragment>
                         ))}

@@ -2,17 +2,13 @@ import React from 'react';
 import { Tooltip } from '~/components';
 import { QuestionMarkCircleIcon } from '~/icons';
 
-const InventoryManagement = ({
-    initial = {
-        sku: '',
-        barcode: '',
-    },
-    formik,
-    handleChangeProductInfo,
-}) => {
-    const handleOnBlur = (propName, value) => {
-        if (initial[propName].localeCompare(value) !== 0) {
-            handleChangeProductInfo(propName, value);
+const InventoryManagement = ({ productDetail, setProductDetail }) => {
+    const handleChange = (propName, value) => {
+        if (productDetail[propName].localeCompare(value) !== 0) {
+            setProductDetail((prev) => ({
+                ...prev,
+                [propName]: value,
+            }));
         }
     };
     return (
@@ -41,8 +37,9 @@ const InventoryManagement = ({
 
                     <div className="flex items-center border p-2 rounded-sm w-full ring-2 ring-transparent focus-within:ring-blue-400 transition">
                         <input
-                            onBlur={(e) => handleOnBlur('sku', e.target.value)}
+                            onBlur={(e) => handleChange('sku', e.target.value)}
                             className="w-full"
+                            defaultValue={productDetail?.sku}
                             type="text"
                             name="sku"
                             id="sku"
@@ -64,18 +61,14 @@ const InventoryManagement = ({
 
                     <div className="space-y-2">
                         <input
-                            onBlur={(e) => handleOnBlur('barcode', e.target.value)}
+                            onBlur={(e) => handleChange('barcode', e.target.value)}
                             className="w-full border p-2 rounded-sm ring-2 ring-transparent focus:ring-blue-400 transition"
                             type="text"
                             name="barcode"
+                            defaultValue={productDetail?.barcode}
                             id="barcode"
                             autoComplete="off"
-                            onChange={formik.handleChange}
-                            value={formik.values.barcode}
                         />
-                        {formik.errors.barcode ? (
-                            <div className="text-sm text-red-500">{formik.errors.barcode}</div>
-                        ) : null}
                     </div>
                 </div>
             </div>

@@ -13,3 +13,4 @@ export { default as AccountVerification } from './AccountVerification';
 export { default as CreateVariant } from './CreateVariant';
 export { default as CreateOrder } from './CreateOrder';
 export { default as OrderDetail } from './OrderDetail';
+export { default as OrderRefund } from './OrderRefund';

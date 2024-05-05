@@ -33,7 +33,9 @@ const ProductProperty = ({
                 properties: next,
             };
         });
-        setProductChanged(true);
+        if (setProductChanged) {
+            setProductChanged(true);
+        }
     };
 
     const handleAddTag = (newTag) => {
@@ -45,7 +47,9 @@ const ProductProperty = ({
                 properties: next,
             };
         });
-        setProductChanged(true);
+        if (setProductChanged) {
+            setProductChanged(true);
+        }
     };
 
     const handleDeleteTag = (targetTag) => {
@@ -57,7 +61,9 @@ const ProductProperty = ({
                 properties: next,
             };
         });
-        setProductChanged(true);
+        if (setProductChanged) {
+            setProductChanged(true);
+        }
     };
 
     const handleChangePropertyName = (value) => {
@@ -69,7 +75,9 @@ const ProductProperty = ({
                 properties: next,
             };
         });
-        setProductChanged(true);
+        if (setProductChanged) {
+            setProductChanged(true);
+        }
     };
 
     return saved ? (

@@ -1,7 +1,5 @@
-import { forwardRef, memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { SearchPopper } from '~/components';
 import { ChevronDownIcon } from '~/icons';
-import { actions, useStore } from '~/store';
 
 const providers = [
     {
@@ -30,34 +28,18 @@ const productTypes = [
     },
 ];
 
-const GeneralProductInfo = ({ ref, productDetail, setProductChanged, handleChangeProductInfo, formik }) => {
-    const [fields, setFields] = useState({
-        name: '',
-        description: '',
-        provider: '',
-        category: '',
-    });
-
-    const handleChange = (key, value) => {
-        setFields((prev) => {
-            return {
+const GeneralProductInfo = ({ productDetail, setProductChanged, setProductDetail }) => {
+    const handleChange = (propName, value) => {
+        if (productDetail[propName].localeCompare(value) !== 0) {
+            setProductDetail((prev) => ({
                 ...prev,
-                [key]: value,
-            };
-        });
-        setProductChanged(true);
-    };
-
-    useEffect(() => {
-        if (productDetail !== null) {
-            setFields({
-                name: productDetail?.name,
-                description: productDetail?.description,
-                provider: productDetail?.provider,
-                category: productDetail?.category,
-            });
+                [propName]: value,
+            }));
         }
-    }, [productDetail]);
+        if (setProductChanged) {
+            setProductChanged(true);
+        }
+    };
 
     return (
         <section className="bg-white rounded-sm shadow-md border p-4 space-y-4">
@@ -68,29 +50,15 @@ const GeneralProductInfo = ({ ref, productDetail, setProductChanged, handleChang
                     <label htmlFor="name" className="font-semibold block text-sm text-gray-600">
                         Product name
                     </label>
-                    {formik ? (
-                        <input
-                            className="border p-2 rounded-sm w-full ring-2 ring-transparent focus:ring-blue-400 transition"
-                            type="text"
-                            name="name"
-                            id="name"
-                            ref={ref}
-                            autoComplete="off"
-                            onChange={formik?.handleChange}
-                            value={formik?.values.name}
-                        />
-                    ) : (
-                        <input
-                            className="border p-2 rounded-sm w-full ring-2 ring-transparent focus:ring-blue-400 transition"
-                            type="text"
-                            name="name"
-                            id="name"
-                            autoComplete="off"
-                            value={fields.name}
-                            onChange={(e) => handleChange('name', e.target.value)}
-                        />
-                    )}
-                    {formik?.errors.name ? <div className="text-sm text-red-500">{formik?.errors.name}</div> : null}
+                    <input
+                        className="border p-2 rounded-sm w-full ring-2 ring-transparent focus:ring-blue-400 transition"
+                        type="text"
+                        name="name"
+                        id="name"
+                        autoComplete="off"
+                        defaultValue={productDetail?.name}
+                        onBlur={(e) => handleChange('name', e.target.value)}
+                    />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2 w-full">
@@ -98,16 +66,14 @@ const GeneralProductInfo = ({ ref, productDetail, setProductChanged, handleChang
                             Provider
                         </label>
                         <SearchPopper
-                            value={fields.provider}
+                            value={productDetail?.provider}
                             items={providers}
-                            setValue={(value) => {
-                                handleChange('provider', value);
-                            }}
+                            setValue={(value) => handleChange('provider', value)}
                         >
                             <div className="flex items-center border p-2 rounded-sm w-full ring-2 ring-transparent focus-within:ring-blue-400 transition">
                                 <input
                                     className="w-full"
-                                    value={fields.provider}
+                                    value={productDetail?.provider}
                                     readOnly
                                     type="text"
                                     name="provider"
@@ -125,7 +91,7 @@ const GeneralProductInfo = ({ ref, productDetail, setProductChanged, handleChang
                             Product type
                         </label>
                         <SearchPopper
-                            value={fields.category}
+                            value={productDetail?.category}
                             items={productTypes}
                             setValue={(value) => {
                                 handleChange('category', value);
@@ -136,7 +102,7 @@ const GeneralProductInfo = ({ ref, productDetail, setProductChanged, handleChang
                                     className="w-full"
                                     type="text"
                                     readOnly
-                                    value={fields.category}
+                                    value={productDetail?.category}
                                     name="category"
                                     id="category"
                                     autoComplete="off"
@@ -159,7 +125,7 @@ const GeneralProductInfo = ({ ref, productDetail, setProductChanged, handleChang
                         placeholder="Write a description for this product"
                         cols="30"
                         rows="10"
-                        value={fields.description}
+                        defaultValue={productDetail?.description}
                         onChange={(e) => handleChange('description', e.target.value)}
                     ></textarea>
                 </div>
@@ -168,4 +134,4 @@ const GeneralProductInfo = ({ ref, productDetail, setProductChanged, handleChang
     );
 };
 
-export default memo(GeneralProductInfo);
+export default GeneralProductInfo;

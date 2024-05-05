@@ -4,10 +4,13 @@ import axios from 'axios';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
+    CalculationUnit,
     GeneralProductInfo,
+    InventoryManagement,
     Modal,
     ProductDetailProperties,
     ProductDetailVariants,
+    ProductPrice,
     ProductThumbnail,
 } from '~/components';
 import { Spinner } from '~/icons';
@@ -122,16 +125,19 @@ const ProductDetail = () => {
                 <section className="container grid grid-cols-4 gap-6">
                     <section className="space-y-4 col-span-3">
                         <GeneralProductInfo
-                            ref={productNameRef}
                             productDetail={productDetail}
+                            setProductDetail={setProductDetail}
                             setProductChanged={setProductChanged}
                         />
+                        <ProductPrice productDetail={productDetail} setProductDetail={setProductDetail} />
+                        <InventoryManagement productDetail={productDetail} setProductDetail={setProductDetail} />
                         <ProductThumbnail
                             productDetail={productDetail}
                             setProductDetail={setProductDetail}
                             setOpenModal={setOpenModal}
                             setModalAction={setModalAction}
                         />
+                        <CalculationUnit productDetail={productDetail} setProductDetail={setProductDetail} />
                         <ProductDetailProperties
                             productDetail={productDetail}
                             setProductChanged={setProductChanged}

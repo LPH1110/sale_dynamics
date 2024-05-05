@@ -1,12 +1,12 @@
 import { MagnifyingGlassIcon, QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useContext, useEffect, useRef, useState } from 'react';
 import { CreateOrderContext } from '~/contexts/pool';
 import { Tooltip } from '~/components';
 import { useDebounce } from '~/store';
 import { productService } from '~/services';
 import { NavLink } from 'react-router-dom';
 
-const ProductList = ({ setCheckedRows, products }) => {
+const DataRow = ({ data, setCheckedRows }) => {
     const [checked, setChecked] = useState(false);
     const checkBoxRef = useRef();
 
@@ -15,13 +15,13 @@ const ProductList = ({ setCheckedRows, products }) => {
             setCheckedRows((prev) => [
                 ...prev,
                 {
-                    ...product,
+                    productDTO: product,
                     quantity: 1,
                 },
             ]);
         } else {
             setCheckedRows((prev) => {
-                let next = prev.filter((item) => item.barcode.localeCompare(product.barcode) !== 0);
+                let next = prev.filter((item) => item?.barcode?.localeCompare(product.barcode) !== 0);
                 return next;
             });
         }
@@ -36,25 +36,28 @@ const ProductList = ({ setCheckedRows, products }) => {
     }, [checked]);
 
     return (
+        <li
+            onClick={() => handleChecked(data)}
+            className="cursor-pointer flex items-center justify-start gap-2 text-sm px-4 py-2 hover:bg-gray-100"
+        >
+            <input ref={checkBoxRef} type="checkbox" name={data?.name} id={data?.barcode} />
+            <div className="rounded-sm">
+                <img src={data?.thumbnails[0].url} className="w-12 h-12 rounded-sm" alt="product-thumb" />
+            </div>
+            <h4>{data?.name}</h4>
+        </li>
+    );
+};
+
+const ProductList = ({ setCheckedRows, products }) => {
+    return (
         <ul>
-            {products.map((product) => (
-                <li
-                    onClick={() => handleChecked(product)}
-                    className="cursor-pointer flex items-center justify-start gap-2 text-sm px-4 py-1 hover:bg-gray-100"
-                >
-                    <input ref={checkBoxRef} type="checkbox" name={product?.name} id={product?.barcode} />
-                    <div className="rounded-sm">
-                        <img
-                            src={
-                                'https://product.hstatic.net/200000871597/product/fd_3706bc6e7ab24adfa2ff6683c33972d4.jpg'
-                            }
-                            className="w-12 h-12 rounded-sm"
-                            alt="product-thumb"
-                        />
-                    </div>
-                    <h4>{product?.name}</h4>
-                </li>
-            ))}
+            {products &&
+                products.map((product) => (
+                    <Fragment key={product.barcode}>
+                        <DataRow data={product} setCheckedRows={setCheckedRows} />
+                    </Fragment>
+                ))}
         </ul>
     );
 };
@@ -81,7 +84,7 @@ const ProductSearch = ({ setOpen }) => {
             let next = prev;
 
             checkedRows.forEach((row) => {
-                let pos = next.map((item) => item.barcode).indexOf(row.barcode);
+                let pos = next.map((item) => item.productDTO.barcode).indexOf(row.productDTO.barcode);
                 if (pos >= 0) {
                     next[pos].quantity += 1;
                 } else {

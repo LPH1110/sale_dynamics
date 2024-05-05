@@ -1,57 +1,44 @@
-import React, { Fragment, useCallback, useContext, useEffect, useState } from 'react';
-import { CreateOrderContext } from '~/contexts/pool';
+import React, { Fragment, useContext, useState } from 'react';
+import { toast } from 'react-toastify';
+import { OrderPaymentContext } from '~/contexts/pool';
+import { Spinner } from '~/icons';
 import { orderService } from '~/services';
 
 const paymentMethods = ['Pay by cash', 'Credit card', 'Banking'];
 
 const OrderPaymentModal = ({ setOpen }) => {
-    const { orderItems, customer, getTotalAmount, setConfirmChecked, confirmChecked } = useContext(CreateOrderContext);
-    const [openSubmenu, setOpenSubMenu] = useState(false);
+    const { orderDetail, setOrderDetail } = useContext(OrderPaymentContext);
     const [isLoading, setIsLoading] = useState(false);
+    const [openSubmenu, setOpenSubMenu] = useState(false);
     const [payMethod, setPayMethod] = useState('Pay by cash');
-    const data = {
-        orderItems: orderItems,
-        customer: customer,
-        totalAmount: getTotalAmount(),
-    };
+    const [paidAmount, setPaidAmount] = useState(orderDetail?.customerOwed);
 
-    const [paidAmount, setPaidAmount] = useState(data.totalAmount);
-
-    const getExcessAmount = useCallback(() => {
-        return paidAmount - data.totalAmount;
-    }, [paidAmount]);
-
-    const handleCreateOrder = async () => {
+    const handleConfirmPayment = async () => {
         setIsLoading(true);
-        console.log({
-            orderItems: orderItems,
-            customer: customer,
-            total: data.totalAmount,
-            received: paidAmount,
-            excess: paidAmount - data.totalAmount,
-            confirmed: confirmChecked,
+        const savedOrder = await orderService.payOrder({
+            orderId: orderDetail?.id,
+            received: orderDetail?.received + paidAmount,
+            excess: orderDetail?.received + paidAmount - orderDetail?.total,
+            customerOwed: orderDetail?.total - (orderDetail?.received + paidAmount),
         });
-        // const order = await orderService.createOrder({
-        //     total: data.totalAmount,
-        //     received: paidAmount,
-        //     excess: paidAmount - data.totalAmount,
-        //     confirmed: true,
-        // });
+        setOrderDetail(savedOrder);
         setIsLoading(false);
+        setOpen(false);
+        toast.success('Pay order successfully!');
     };
 
     return (
         <div className="w-full">
             <div className="px-4 pb-4 border-b">
-                <h2 className="font-semibold">Create Order</h2>
+                <h2 className="text-xl">Order payment</h2>
             </div>
-            <div className="p-4 flex items-center justify-between border-b text-sm">
-                <h4>Total amount</h4>
-                <p className="font-semibold">$ {data.totalAmount}</p>
+            <div className="flex items-center justify-between text-sm p-4 border-b">
+                <p>Total amount have to be paid</p>
+                <p className="font-semibold">$ {orderDetail?.customerOwed}</p>
             </div>
             <div className="flex items-center justify-between p-4 text-sm gap-4 border-b">
                 <div
-                    onFocus={() => setOpenSubMenu(!openSubmenu)}
+                    onClick={() => setOpenSubMenu(!openSubmenu)}
                     className="relative p-2 rounded-sm w-full focus-within:ring-blue-500 transition ring-1 ring-slate-100 cursor-pointer"
                 >
                     <input type="text" value={payMethod} readOnly className="w-full" />
@@ -89,43 +76,25 @@ const OrderPaymentModal = ({ setOpen }) => {
                     />
                 </div>
             </div>
-            <div className="p-4 border-b text-sm">
-                <div className="flex items-center justify-between">
-                    <h4>Paid amount</h4>
-                    <p className="font-semibold">$ {paidAmount}</p>
-                </div>
-                <div className="flex items-center justify-between">
-                    <h4>Excess amount</h4>
-                    <p className="text-slate-500">$ {getExcessAmount()}</p>
-                </div>
+            <div className="flex items-center justify-between text-sm p-4 border-b">
+                <p>Paid money</p>
+                <p className="font-semibold">$ {paidAmount}</p>
             </div>
-            <div className="flex items-center justify-between pt-4 px-4 text-sm">
-                <div className="space-x-2">
-                    <input
-                        checked={confirmChecked}
-                        onChange={() => setConfirmChecked(!confirmChecked)}
-                        type="checkbox"
-                        name="order_confirm"
-                        id="order_confirm"
-                    />
-                    <label htmlFor="order_confirm">Confirm this order</label>
-                </div>
-                <div className="flex items-center gap-2">
-                    <button
-                        onClick={() => setOpen(false)}
-                        className="min-w-[4rem] py-2 px-4 rounded-sm border bg-white hover:bg-slate-50 transition"
-                        type="button"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        onClick={handleCreateOrder}
-                        className="text-white min-w-[4rem] py-2 px-4 rounded-sm bg-blue-500 hover:bg-blue-600 transition"
-                        type="button"
-                    >
-                        Create order
-                    </button>
-                </div>
+            <div className="flex items-center justify-end gap-2 pt-4 px-4 text-sm">
+                <button
+                    onClick={() => setOpen(false)}
+                    className="min-w-[4rem] py-3 px-4 rounded-sm border bg-white hover:bg-slate-50 transition"
+                    type="button"
+                >
+                    Cancel
+                </button>
+                <button
+                    className="text-white min-w-[4rem] py-3 px-4 rounded-sm bg-blue-500 hover:bg-blue-600 transition"
+                    type="button"
+                    onClick={handleConfirmPayment}
+                >
+                    {isLoading ? <Spinner /> : 'Confirm payment'}
+                </button>
             </div>
         </div>
     );

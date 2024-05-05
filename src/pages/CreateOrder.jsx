@@ -1,115 +1,13 @@
-import { MagnifyingGlassIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
 import { Fragment, useCallback, useEffect, useState } from 'react';
-import { useDebounce, useStore } from '~/store';
+import { useDebounce } from '~/store';
 
-import { Link } from 'react-router-dom';
-import { CustomerCard, Modal, OrderConfirmCard } from '~/components';
-import { CreateOrderContext } from '~/contexts/pool';
 import { Transition } from '@headlessui/react';
+import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-
-const DataRow = ({ setOrderItems, data, index }) => {
-    const handleChangeQuantity = (e) => {
-        if (Number(e.target.value)) {
-            setOrderItems((prev) => {
-                let next = [...prev];
-                next[index].quantity = Number(e.target.value);
-                return next;
-            });
-        }
-    };
-
-    const handleIncreaseQty = () => {
-        setOrderItems((prev) => {
-            let next = [...prev];
-            next[index].quantity = next[index].quantity + 1;
-            return next;
-        });
-    };
-
-    const handleDecreaseQty = () => {
-        setOrderItems((prev) => {
-            if (prev[index].quantity > 1) {
-                let next = [...prev];
-                next[index].quantity = next[index].quantity - 1;
-                return next;
-            } else {
-                return prev;
-            }
-        });
-    };
-
-    const handleRemoveItem = () => {
-        setOrderItems((prev) => {
-            let next = prev.filter((item) => item.barcode.localeCompare(data.barcode) !== 0);
-            return next;
-        });
-    };
-
-    return (
-        <tr>
-            {/* Product info */}
-            <td className="flex px-2 py-4 text-sm gap-2 items-center">
-                <div className="rounded-sm">
-                    <img
-                        src={'https://product.hstatic.net/200000871597/product/fd_3706bc6e7ab24adfa2ff6683c33972d4.jpg'}
-                        className="w-12 h-12 rounded-sm"
-                        alt="product-thumb"
-                    />
-                </div>
-                <div>
-                    <Link
-                        to={`/products/detail/${data?.barcode}`}
-                        className="text-blue-500 hover:text-blue-600 transition hover:underline"
-                    >
-                        {data?.name}
-                    </Link>
-                </div>
-            </td>
-            {/* Quantity */}
-            <td className="py-4 px-2">
-                <div className="ring-1 ring-slate-300 focus-within:ring-blue-500 transition rounded-md flex items-center justify-between">
-                    <input
-                        type="text"
-                        value={data?.quantity}
-                        onChange={handleChangeQuantity}
-                        className="w-full p-2 rounded-l-md"
-                    />
-                    <div className="flex flex-col mr-1">
-                        <button
-                            onClick={handleIncreaseQty}
-                            className="p-1 hover:bg-blue-100 transition rounded-sm"
-                            type="button"
-                        >
-                            <ChevronUpIcon className="w-2 h-2" />
-                        </button>
-                        <button
-                            onClick={handleDecreaseQty}
-                            className="p-1 hover:bg-blue-100 transition rounded-sm"
-                            type="button"
-                        >
-                            <ChevronDownIcon className="w-2 h-2" />
-                        </button>
-                    </div>
-                </div>
-            </td>
-            {/* Price */}
-            <td className="px-2 py-4 text-right">{data?.salePrice}</td>
-            {/* Amount */}
-            <td className="px-2 py-4 text-right">{data?.salePrice * Number(data?.quantity)}</td>
-            <td className="px-2 py-4 text-right">
-                <button
-                    onClick={handleRemoveItem}
-                    type="button"
-                    className="pt-2 text-slate-400 hover:text-slate-700 transition"
-                >
-                    <XMarkIcon className="w-5 h-5" />
-                </button>
-            </td>
-        </tr>
-    );
-};
+import { CustomerCard, Modal, OrderItemRow } from '~/components';
+import { CreateOrderContext } from '~/contexts/pool';
 
 const CreateOrder = () => {
     const [searchValue, setSearchValue] = useState('');
@@ -132,7 +30,7 @@ const CreateOrder = () => {
 
     const getTotalAmount = useCallback(() => {
         return orderItems.reduce((acc, item) => {
-            return (acc += item.quantity * item.salePrice);
+            return (acc += item.quantity * item.productDTO.salePrice);
         }, 0);
     }, []);
 
@@ -260,8 +158,8 @@ const CreateOrder = () => {
                                             </thead>
                                             <tbody>
                                                 {orderItems.map((item, index) => (
-                                                    <Fragment key={item.barcode}>
-                                                        <DataRow
+                                                    <Fragment key={item.productDTO.barcode}>
+                                                        <OrderItemRow
                                                             setOrderItems={setOrderItems}
                                                             data={item}
                                                             index={index}
@@ -290,7 +188,7 @@ const CreateOrder = () => {
                                                 <div>Product quantity</div>
                                                 <div>Total amount</div>
                                                 <div>Discount</div>
-                                                <div className="font-semibold">Receivable</div>
+                                                <div className="font-semibold">Received</div>
                                             </div>
                                             <div className="text-right space-y-4">
                                                 <div>{getProductListQty()}</div>
@@ -303,10 +201,12 @@ const CreateOrder = () => {
                                     <div className="flex items-center gap-2 justify-end p-4">
                                         <button
                                             onClick={() => {
-                                                if (orderItems.length > 0 && customer !== null) {
-                                                    setModal({ open: true, action: 'order-payment' });
+                                                if (orderItems.length <= 0) {
+                                                    toast.warn('You need to add more items');
+                                                } else if (customer === null) {
+                                                    toast.warn('Please assign a customer');
                                                 } else {
-                                                    toast.warn('Not enough credentials');
+                                                    setModal({ open: true, action: 'create-order' });
                                                 }
                                             }}
                                             className="min-w-[4rem] text-white px-4 py-2 rounded-sm bg-blue-500 hover:bg-blue-600 transition"

@@ -23,3 +23,6 @@ export { default as GalleryThumb } from './GalleryThumb';
 export { default as ImageWithFallback } from './ImageWithFallback';
 export { default as CustomerCard } from './CustomerCard';
 export { default as OrderConfirmCard } from './OrderConfirmCard';
+export { default as OrderStatus } from './OrderStatus';
+export { default as OrderItemRow } from './OrderItemRow';
+export { default as OrderDetailItemRow } from './OrderDetailItemRow';

@@ -25,7 +25,7 @@ const Signin = () => {
                 setIsLoading(true);
                 const res = await signin(data.username, data.password);
 
-                if (res?.user) {
+                if (res?.userDTO) {
                     toast.success('Login successfully!');
                     navigate('/');
                 } else {

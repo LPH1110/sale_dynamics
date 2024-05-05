@@ -47,7 +47,7 @@ const CustomerCard = ({ setModal }) => {
                         value={searchValue}
                         onChange={(e) => setSearchValue(e.target.value)}
                         type="text"
-                        placeholder="Search a customer"
+                        placeholder="Search by phone or name"
                         className="w-full text-sm py-2 rounded-r-md"
                     />
                     {searchResult.length > 0 && (

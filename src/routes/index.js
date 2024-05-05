@@ -9,6 +9,7 @@ import {
     CreateProduct,
     CreateVariant,
     OrderDetail,
+    OrderRefund,
     Orders,
     ProductDetail,
     Products,
@@ -31,4 +32,5 @@ export const publicRoutes = [
     { path: '/orders', protected: true, page: Orders, layout: MainLayout },
     { path: '/orders/create-new', protected: true, page: CreateOrder, layout: MainLayout },
     { path: '/orders/detail/:orderId', protected: true, page: OrderDetail, layout: MainLayout },
+    { path: '/orders/detail/:orderId/refund', protected: true, page: OrderRefund, layout: MainLayout },
 ];

@@ -11,7 +11,9 @@ const ProductDetailProperties = ({ productDetail, setProductDetail, setProductCh
                 properties: next,
             };
         });
-        setProductChanged(true);
+        if (setProductChanged) {
+            setProductChanged(true);
+        }
     };
 
     const handleAddProperty = () => {
@@ -25,7 +27,9 @@ const ProductDetailProperties = ({ productDetail, setProductDetail, setProductCh
                     properties: next,
                 };
             });
-            setProductChanged(true);
+            if (setProductChanged) {
+                setProductChanged(true);
+            }
         }
     };
 
@@ -38,7 +42,9 @@ const ProductDetailProperties = ({ productDetail, setProductDetail, setProductCh
                 properties: next,
             };
         });
-        setProductChanged(true);
+        if (setProductChanged) {
+            setProductChanged(true);
+        }
     };
 
     return (

@@ -37,7 +37,7 @@ const ResendVerification = ({ setOpen }) => {
     };
 
     return (
-        <div className="w-full space-y-4">
+        <div className="w-full space-y-4 px-4">
             <div className="space-y-2">
                 <h2 className="font-semibold">Resend Verification</h2>
                 <p className="text-sm text-gray-600">Please confirm if you want to verify these user</p>

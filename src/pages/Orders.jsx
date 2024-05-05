@@ -7,6 +7,8 @@ import { EnvelopeIcon, PlusIcon, TrashIcon } from '~/icons';
 import { orderService } from '~/services';
 import { actions, useStore } from '~/store';
 import { authorizeAdmin } from '~/utils';
+import { format } from 'date-fns';
+import { OrderStatus } from '~/components';
 
 const tableHeadings = [
     {
@@ -32,7 +34,7 @@ const tableHeadings = [
         id: uuidv4(),
     },
     {
-        title: 'Total',
+        title: 'Total ($)',
         id: uuidv4(),
     },
 ];
@@ -62,16 +64,19 @@ const DataRow = ({ data }) => {
             <td className="text-center p-3 hover:bg-gray-100">
                 <input onChange={handleChecked} ref={checkRef} className="w-4 h-4" type="checkbox" />
             </td>
-            <td className="text-sm p-3 hover:bg-gray-100">{data.id}</td>
-            <td className="text-sm p-3 hover:bg-gray-100 hover:underline">
-                <NavLink className="text-blue-500" to={`/accounts/detail/${data.username}`}>
-                    {data.fullName}
-                </NavLink>
+            <td className="text-sm p-3 hover:bg-gray-100 cursor-pointer">
+                <Link className="text-blue-500 hover:underline " to={`/orders/detail/${data?.id}`}>
+                    {data?.id}
+                </Link>
             </td>
-            <td className="text-sm p-3 hover:bg-gray-100">{data.email}</td>
-            <td className="text-sm p-3 hover:bg-gray-100">{data.enabled && 'yes'}</td>
-            <td className="text-sm p-3 hover:bg-gray-100">{authorizeAdmin(data) ? 'admin' : ''}</td>
-            <td className="text-sm p-3 hover:bg-gray-100">{data.phone}</td>
+            <td className="text-sm p-3 hover:bg-gray-100">{format(data?.createdDate, 'dd/MM/yyyy HH:mm:ss')}</td>
+            <td className="text-sm p-3 hover:bg-gray-100">
+                {data?.customer?.firstname + ' ' + data?.customer?.lastname}
+            </td>
+            <td className="text-sm p-3 hover:bg-gray-100">
+                <OrderStatus status={data.status} />
+            </td>
+            <td className="text-sm p-3 hover:bg-gray-100">{data?.total}</td>
         </tr>
     );
 };
@@ -110,15 +115,7 @@ const Orders = () => {
                         </span>{' '}
                         Delete
                     </button>
-                    <button
-                        type="button"
-                        className=" flex gap-2 items-center justify-center px-3 py-2 text-sm rounded-sm hover:bg-gray-100"
-                    >
-                        <span className="w-5 h-5 text-blue-500">
-                            <EnvelopeIcon />
-                        </span>{' '}
-                        Resend email
-                    </button>
+
                     <div className="w-full ml-2 flex gap-2 items-center border py-1 px-2 rounded-sm ring-2 ring-transparent focus-within:ring-blue-400 transition">
                         <button type="button" className="w-4 h-4">
                             <MagnifyingGlassIcon />
@@ -126,7 +123,7 @@ const Orders = () => {
                         <input
                             className="w-full"
                             type="text"
-                            placeholder="Searching an account"
+                            placeholder="Searching an order"
                             name="provider"
                             id="provider"
                         />

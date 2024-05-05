@@ -3,10 +3,8 @@ import { memo, useEffect, useState } from 'react';
 import { GalleryCard, Tooltip } from '~/components';
 import { QuestionMarkCircleIcon } from '~/icons';
 import { productService } from '~/services';
-import { fetchProductDetail } from '~/services/products';
 import saveProductThumbnail from '~/services/products/saveProductThumbnail';
 import { actions, useStore } from '~/store';
-import { setClearedImage } from '~/store/actions';
 
 const ProductThumbnail = ({ productDetail, setProductDetail, setOpenModal, setModalAction }) => {
     const [state, dispatch] = useStore();
@@ -29,8 +27,6 @@ const ProductThumbnail = ({ productDetail, setProductDetail, setOpenModal, setMo
 
     useEffect(() => {
         const clearImage = async () => {
-            console.log(productDetail.barcode);
-            console.log(clearedId);
             await productService.deleteProductThumbnail({
                 barcode: productDetail.barcode,
                 thumbnailId: clearedId,

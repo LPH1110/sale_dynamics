@@ -13,8 +13,8 @@ const AuthProvider = ({ children }) => {
                 password: password,
             });
 
-            setUser(res.data.user);
-            console.log(res.data.user);
+            setUser(res.data.userDTO);
+            console.log(res.data.userDTO);
             window.localStorage.setItem('jwt', res.data.jwt);
 
             return res.data;

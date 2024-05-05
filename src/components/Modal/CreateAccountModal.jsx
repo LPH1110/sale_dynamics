@@ -55,7 +55,7 @@ const CreateAccountModal = ({ setAccounts, setOpen }) => {
     });
 
     return (
-        <section className="space-y-4 w-full">
+        <section className="space-y-4 w-full px-4">
             <h1 className="text-lg font-semibold">Quick Create: Account</h1>
             <form onSubmit={formik.handleSubmit} className="space-y-6">
                 <div className="flex justify-between">

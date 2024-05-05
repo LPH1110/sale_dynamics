@@ -22,7 +22,7 @@ const ConfirmDeletionModal = ({ tableName, data, setOpen }) => {
     };
 
     return (
-        <div className="w-full space-y-4">
+        <div className="w-full space-y-4 px-4">
             <div className="space-y-2">
                 <h2>Delete Confirmation</h2>
                 <p className="text-sm text-gray-600">
