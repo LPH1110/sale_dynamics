@@ -1,8 +1,11 @@
 import React from 'react';
 import { Tooltip } from '~/components';
+import { UserAuth } from '~/contexts/AuthContext/AuthProvider';
 import { QuestionMarkCircleIcon } from '~/icons';
+import { authorizeAdmin } from '~/utils';
 
 const InventoryManagement = ({ productDetail, setProductDetail }) => {
+    const { user } = UserAuth();
     const handleChange = (propName, value) => {
         if (productDetail[propName].localeCompare(value) !== 0) {
             setProductDetail((prev) => ({
@@ -37,6 +40,7 @@ const InventoryManagement = ({ productDetail, setProductDetail }) => {
 
                     <div className="flex items-center border p-2 rounded-sm w-full ring-2 ring-transparent focus-within:ring-blue-400 transition">
                         <input
+                            readOnly={!authorizeAdmin(user)}
                             onBlur={(e) => handleChange('sku', e.target.value)}
                             className="w-full"
                             defaultValue={productDetail?.sku}
@@ -61,6 +65,7 @@ const InventoryManagement = ({ productDetail, setProductDetail }) => {
 
                     <div className="space-y-2">
                         <input
+                            readOnly={!authorizeAdmin(user)}
                             onBlur={(e) => handleChange('barcode', e.target.value)}
                             className="w-full border p-2 rounded-sm ring-2 ring-transparent focus:ring-blue-400 transition"
                             type="text"

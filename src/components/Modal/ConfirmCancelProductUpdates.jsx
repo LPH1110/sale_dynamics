@@ -1,36 +1,15 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { Spinner } from '~/icons';
-import { actions, useStore } from '~/store';
 
 const ConfirmCancelProductUpdates = ({ setOpen }) => {
     const [isLoading, setIsLoading] = useState(false);
-    const [state, dispatch] = useStore();
-    const { cancelPrdChangesOpt } = state;
-    const navigate = useNavigate();
-
-    // const cancelChanges = () => {
-    //     try {
-    //         setIsLoading(true);
-    //         dispatch(actions.deleteProductChanges());
-    //     } catch (error) {
-    //         console.error(error);
-    //     } finally {
-    //         if (cancelPrdChangesOpt) {
-    //             navigate(cancelPrdChangesOpt);
-    //             dispatch(actions.clearCancelProductChangesOption());
-    //         }
-    //         setIsLoading(false);
-    //         setOpen(false);
-    //     }
-    // };
 
     const continueUpdate = () => {
         setOpen(false);
     };
 
     return (
-        <div className="w-full space-y-4">
+        <div className="w-full space-y-4 px-4">
             <div className="space-y-2">
                 <h2>Cancel all changes that haven't been saved</h2>
                 <p className="text-sm text-gray-600">

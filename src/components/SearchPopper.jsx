@@ -1,9 +1,12 @@
 import { Transition } from '@headlessui/react';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
+import { UserAuth } from '~/contexts/AuthContext/AuthProvider';
+import { authorizeAdmin } from '~/utils';
 
 const SearchPopper = ({ children, items, value, setValue }) => {
     const [openMenu, setOpenMenu] = useState(false);
     const menuRef = useRef();
+    const { user } = UserAuth();
 
     const handleClickOutside = (e) => {
         if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -23,7 +26,7 @@ const SearchPopper = ({ children, items, value, setValue }) => {
         <div className="relative">
             <div onClick={() => setOpenMenu((prev) => !prev)}>{children}</div>
             <Transition
-                show={openMenu}
+                show={authorizeAdmin(user) && openMenu}
                 as={Fragment}
                 enter="transition ease-out duration-200"
                 enterFrom="transform opacity-0 scale-95"

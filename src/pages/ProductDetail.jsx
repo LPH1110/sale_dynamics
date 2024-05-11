@@ -13,10 +13,12 @@ import {
     ProductPrice,
     ProductThumbnail,
 } from '~/components';
+import { UserAuth } from '~/contexts/AuthContext/AuthProvider';
 import { Spinner } from '~/icons';
 import { productService } from '~/services';
 import fetchProductDetail from '~/services/products/fetchProductDetail';
 import { actions, useStore } from '~/store';
+import { authorizeAdmin } from '~/utils';
 
 const ProductDetail = () => {
     const { barcode } = useParams();
@@ -26,11 +28,24 @@ const ProductDetail = () => {
     const [productChanged, setProductChanged] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [, dispatch] = useStore();
+    const { user } = UserAuth();
 
-    const productNameRef = useRef();
-    const formRef = useRef();
+    useEffect(() => {
+        const handleBeforeUnload = (e) => {
+            e?.preventDefault();
+            console.log('Running unload');
+        };
 
-    const handleUpdate = () => {};
+        // handles when page is unloaded
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
+        // cleanup function handles when component unmounts
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+            setModalAction('confirm-cancel-product_updates');
+            setOpenModal(true);
+        };
+    }, []);
 
     useEffect(() => {
         const getProductDetail = async () => {
@@ -72,7 +87,7 @@ const ProductDetail = () => {
         <form onSubmit={handleSubmit} className="relative h-screen-content overflow-auto">
             <Transition
                 as={Fragment}
-                show={productChanged}
+                show={authorizeAdmin(user) && productChanged}
                 enter="ease-out duration-300"
                 enterFrom="opacity-0"
                 enterTo="opacity-100"
@@ -96,7 +111,6 @@ const ProductDetail = () => {
                             </button>
                             <button
                                 type="submit"
-                                onClick={handleUpdate}
                                 className="bg-blue-500 min-w-[4rem] flex items-center justify-center hover:bg-blue-600 rounded-sm transition text-white font-semibold py-2 px-4"
                             >
                                 {isLoading ? <Spinner /> : 'Update'}

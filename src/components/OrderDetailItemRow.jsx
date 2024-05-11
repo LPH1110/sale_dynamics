@@ -4,7 +4,7 @@ const OrderDetailItemRow = ({ data, index }) => {
     return (
         <tr>
             {/* Product info */}
-            <td className="flex px-2 py-4 text-sm gap-2 items-center">
+            <td className="flex p-4 text-sm gap-4 items-center">
                 <div className="rounded-sm">
                     <img
                         src={data?.productDTO.thumbnails[0].url}
@@ -22,11 +22,11 @@ const OrderDetailItemRow = ({ data, index }) => {
                 </div>
             </td>
             {/* Quantity */}
-            <td className="py-4 px-2 text-center">{data?.quantity}</td>
+            <td className="p-4 text-center">{data?.quantity}</td>
             {/* Price */}
-            <td className="px-2 py-4 text-right">{data?.productDTO.salePrice}</td>
+            <td className=" p-4 text-right">{data?.productDTO.salePrice}</td>
             {/* Amount */}
-            <td className="px-2 py-4 text-right">{data?.productDTO.salePrice * Number(data?.quantity)}</td>
+            <td className=" p-4 text-right">{data?.productDTO.salePrice * Number(data?.quantity)}</td>
         </tr>
     );
 };

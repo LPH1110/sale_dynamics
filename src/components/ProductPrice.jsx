@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Tooltip } from '~/components';
+import { UserAuth } from '~/contexts/AuthContext/AuthProvider';
 import { QuestionMarkCircleIcon } from '~/icons';
+import { authorizeAdmin } from '~/utils';
 
 const ProductPrice = ({ productDetail, setProductDetail }) => {
+    const { user } = UserAuth();
     const handleChange = (propName, value) => {
         if (Number(value) && productDetail[propName] !== Number(value)) {
             setProductDetail((prev) => ({
@@ -38,6 +41,7 @@ const ProductPrice = ({ productDetail, setProductDetail }) => {
                             type="text"
                             name="salePrice"
                             id="salePrice"
+                            readOnly={!authorizeAdmin(user)}
                             defaultValue={productDetail?.salePrice}
                             onBlur={(e) => handleChange('salePrice', e.target.value)}
                             autoComplete="off"
@@ -65,6 +69,7 @@ const ProductPrice = ({ productDetail, setProductDetail }) => {
                             type="text"
                             name="comparedPrice"
                             id="comparedPrice"
+                            readOnly={!authorizeAdmin(user)}
                             autoComplete="off"
                             defaultValue={productDetail?.comparedPrice}
                             onBlur={(e) => handleChange('comparedPrice', e.target.value)}

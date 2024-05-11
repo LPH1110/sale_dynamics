@@ -64,7 +64,7 @@ const ProductThumbnail = ({ productDetail, setProductDetail, setOpenModal, setMo
                 </Tooltip>
             </div>
             <div className="h-[1px] my-4 w-full bg-gray-100"></div>
-            <div>
+            <div>   
                 {thumbnails.length > 0 ? (
                     <GalleryCard clearImage={handleClearImage} images={thumbnails} />
                 ) : (
@@ -72,7 +72,7 @@ const ProductThumbnail = ({ productDetail, setProductDetail, setOpenModal, setMo
                         <div className="text-blue-500 gap-2 flex flex-col items-center justify-center p-6 border border-dashed hover:bg-blue-50 transition cursor-pointer rounded-md text-center text-sm">
                             <PhotoIcon className="w-10 h-10 text-gray-400" />
                             <h4>Add images</h4>
-                            <p>
+                            <p> 
                                 Add from URL <span className="text-gray-600">(images/videos)</span>
                             </p>
                         </div>

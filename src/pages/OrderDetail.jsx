@@ -211,6 +211,19 @@ const OrderDetail = () => {
                         {/* Right */}
                         <section className="space-y-4">
                             <OrderConfirmCard orderDetail={orderDetail} setOrderDetail={setOrderDetail} />
+                            <div className="bg-white rounded-sm shadow-md border space-y-4 text-sm">
+                                <div className="p-4 border-b flex items-center justify-between">
+                                    <h4 className="font-semibold">Issued by</h4>
+                                </div>
+                                <div className="px-4 pb-4 space-y-2">
+                                    <Link
+                                        to={`/accounts/detail/${orderDetail?.issuer}`}
+                                        className="text-blue-500 hover:text-blue-600 transition"
+                                    >
+                                        {orderDetail?.issuer}
+                                    </Link>
+                                </div>
+                            </div>
                         </section>
                     </section>
                 </section>

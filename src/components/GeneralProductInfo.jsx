@@ -1,5 +1,7 @@
 import { SearchPopper } from '~/components';
+import { UserAuth } from '~/contexts/AuthContext/AuthProvider';
 import { ChevronDownIcon } from '~/icons';
+import { authorizeAdmin } from '~/utils';
 
 const providers = [
     {
@@ -29,6 +31,7 @@ const productTypes = [
 ];
 
 const GeneralProductInfo = ({ productDetail, setProductChanged, setProductDetail }) => {
+    const { user } = UserAuth();
     const handleChange = (propName, value) => {
         if (productDetail[propName].localeCompare(value) !== 0) {
             setProductDetail((prev) => ({
@@ -55,6 +58,7 @@ const GeneralProductInfo = ({ productDetail, setProductChanged, setProductDetail
                         type="text"
                         name="name"
                         id="name"
+                        readOnly={!authorizeAdmin(user)}
                         autoComplete="off"
                         defaultValue={productDetail?.name}
                         onBlur={(e) => handleChange('name', e.target.value)}
@@ -124,6 +128,7 @@ const GeneralProductInfo = ({ productDetail, setProductChanged, setProductDetail
                         id="description"
                         placeholder="Write a description for this product"
                         cols="30"
+                        readOnly={!authorizeAdmin(user)}
                         rows="10"
                         defaultValue={productDetail?.description}
                         onChange={(e) => handleChange('description', e.target.value)}
