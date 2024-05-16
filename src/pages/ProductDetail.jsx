@@ -120,48 +120,50 @@ const ProductDetail = () => {
                 </header>
             </Transition>
 
-            <section className="px-4 pt-6 space-y-4">
-                {/* Main header */}
-                <section className="mb-12 flex items-center justify-between">
-                    <div className="flex items-center text-sm gap-2 text-gray-500">
-                        <Link className="hover:text-blue-500 hover:underline" to="#">
-                            Sample
-                        </Link>{' '}
-                        <ChevronRightIcon className="w-3 h-3" />
-                        <Link className="hover:text-blue-500 hover:underline" to="#">
-                            breadcums
-                        </Link>
-                    </div>
-                </section>
-                <section>
-                    <h2 className="font-semibold text-xl">{productDetail?.name}</h2>
-                </section>
-                <section className="container grid grid-cols-4 gap-6">
-                    <section className="space-y-4 col-span-3">
-                        <GeneralProductInfo
-                            productDetail={productDetail}
-                            setProductDetail={setProductDetail}
-                            setProductChanged={setProductChanged}
-                        />
-                        <ProductPrice productDetail={productDetail} setProductDetail={setProductDetail} />
-                        <InventoryManagement productDetail={productDetail} setProductDetail={setProductDetail} />
-                        <ProductThumbnail
-                            productDetail={productDetail}
-                            setProductDetail={setProductDetail}
-                            setOpenModal={setOpenModal}
-                            setModalAction={setModalAction}
-                        />
-                        <CalculationUnit productDetail={productDetail} setProductDetail={setProductDetail} />
-                        <ProductDetailProperties
-                            productDetail={productDetail}
-                            setProductChanged={setProductChanged}
-                            setProductDetail={setProductDetail}
-                        />
-                        <ProductDetailVariants
-                            setModalAction={setModalAction}
-                            setOpenModal={setOpenModal}
-                            productId={barcode}
-                        />
+            <section className="flex justify-center pt-6">
+                <section className="container space-y-4 px-4">
+                    {/* Main header */}
+                    <section className="mb-12 flex items-center justify-between">
+                        <div className="flex items-center text-sm gap-2 text-gray-500">
+                            <Link className="hover:text-blue-500 hover:underline" to="#">
+                                Sample
+                            </Link>{' '}
+                            <ChevronRightIcon className="w-3 h-3" />
+                            <Link className="hover:text-blue-500 hover:underline" to="#">
+                                breadcums
+                            </Link>
+                        </div>
+                    </section>
+                    <section>
+                        <h2 className="font-semibold text-xl">{productDetail?.name}</h2>
+                    </section>
+                    <section className="container grid grid-cols-4 gap-6">
+                        <section className="space-y-4 col-span-3">
+                            <GeneralProductInfo
+                                productDetail={productDetail}
+                                setProductDetail={setProductDetail}
+                                setProductChanged={setProductChanged}
+                            />
+                            <ProductPrice productDetail={productDetail} setProductDetail={setProductDetail} />
+                            <InventoryManagement productDetail={productDetail} setProductDetail={setProductDetail} />
+                            <ProductThumbnail
+                                productDetail={productDetail}
+                                setProductDetail={setProductDetail}
+                                setOpenModal={setOpenModal}
+                                setModalAction={setModalAction}
+                            />
+                            <CalculationUnit productDetail={productDetail} setProductDetail={setProductDetail} />
+                            <ProductDetailProperties
+                                productDetail={productDetail}
+                                setProductChanged={setProductChanged}
+                                setProductDetail={setProductDetail}
+                            />
+                            <ProductDetailVariants
+                                setModalAction={setModalAction}
+                                setOpenModal={setOpenModal}
+                                productId={barcode}
+                            />
+                        </section>
                     </section>
                 </section>
             </section>

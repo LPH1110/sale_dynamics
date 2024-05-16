@@ -31,3 +31,17 @@ export const sampleProductDetail = {
 };
 
 export const propertyNames = ['materials', 'colors', 'size'];
+
+export const dateRangeKeys = [
+    'Today',
+    'Yesterday',
+    '7 days ago',
+    '30 days ago',
+    'This month',
+    'Previous month',
+    'This quarter',
+    'Previous quarter',
+    'This year',
+    'Previous year',
+    'Optional',
+];

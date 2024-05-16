@@ -1,13 +1,13 @@
 import { ChevronDownIcon, PrinterIcon } from '@heroicons/react/24/outline';
-import { format } from 'date-fns';
-import React, { Fragment, createRef, useCallback, useEffect, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Modal, OrderConfirmCard, OrderDetailItemRow, OrderItemRow, OrderStatus } from '~/components';
+import ReactToPrint from 'react-to-print';
+import { Modal, OrderConfirmCard, OrderDetailItemRow, OrderStatus } from '~/components';
 import { OrderPaymentContext } from '~/contexts/pool';
-import { orderService } from '~/services';
-import ReactToPrint, { useReactToPrint } from 'react-to-print';
-import { OrderInvoice } from '~/templates';
 import { Spinner } from '~/icons';
+import { orderService } from '~/services';
+import { OrderInvoice } from '~/templates';
+import { formatArrayDate } from '~/utils';
 
 const OrderDetail = () => {
     const { orderId } = useParams();
@@ -58,7 +58,7 @@ const OrderDetail = () => {
                                     <OrderStatus status={orderDetail?.status} />
                                 </div>
                             </div>
-                            <p>{orderDetail?.createdDate && format(orderDetail?.createdDate, 'dd/MM/yyyy HH:mm:ss')}</p>
+                            <p>{orderDetail?.createdDate && formatArrayDate(orderDetail.createdDate)}</p>
                         </div>
                         <div className="flex gap-2 items-center">
                             <div className="relative">

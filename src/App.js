@@ -1,9 +1,8 @@
 import { Route, Routes } from 'react-router-dom';
-import { publicRoutes } from './routes';
-import ProtectedRoute from './routes/ProtectedRoute';
-import Authority from './routes/Authority';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { publicRoutes } from './routes';
+import ProtectedRoute from './routes/ProtectedRoute';
 
 function App() {
     return (

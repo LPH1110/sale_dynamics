@@ -3,6 +3,7 @@ import React, { Fragment, forwardRef, useEffect, useState } from 'react';
 import Barcode from 'react-barcode';
 import { UserAuth } from '~/contexts/AuthContext/AuthProvider';
 import { userService } from '~/services';
+import { formatArrayDate } from '~/utils';
 
 const OrderInvoice = forwardRef(({ orderDetail }, ref) => {
     const { user } = UserAuth();
@@ -34,9 +35,7 @@ const OrderInvoice = forwardRef(({ orderDetail }, ref) => {
                         <h4 className="uppercase font-semibold text-lg">Invoice no:</h4>
 
                         <p className="font-semibold">#{orderDetail?.id}</p>
-                        <p className="text-gray-500">
-                            {orderDetail && format(orderDetail?.createdDate, 'dd/MM/yyyy HH:mm:ss')}
-                        </p>
+                        <p className="text-gray-500">{orderDetail && formatArrayDate(orderDetail?.createdDate)}</p>
                     </div>
                 </div>
             </header>

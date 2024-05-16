@@ -5,7 +5,9 @@ import { toast } from 'react-toastify';
 import { OrderStatus } from '~/components';
 import { Spinner } from '~/icons';
 import { userService } from '~/services';
-import { request } from '~/utils';
+import { formatArrayDate, hasChangedPassword, request } from '~/utils';
+import NotAllowAccess from './NotAllowAccess';
+import { UserAuth } from '~/contexts/AuthContext/AuthProvider';
 
 const AccountDetail = () => {
     const { username } = useParams();
@@ -17,7 +19,7 @@ const AccountDetail = () => {
         email: '',
     });
 
-    console.log(account);
+    const { user } = UserAuth();
 
     useEffect(() => {
         const getUserDetail = async () => {
@@ -47,7 +49,9 @@ const AccountDetail = () => {
         }
     };
 
-    return (
+    return !hasChangedPassword(user) ? (
+        <NotAllowAccess />
+    ) : (
         <section className="h-screen-content overflow-auto py-4 flex items-start justify-center">
             <section className="container space-y-4">
                 <section className="bg-white shadow-sm flex items-center gap-4 border rounded-md p-4">
@@ -151,7 +155,7 @@ const AccountDetail = () => {
                                     <Link to={`/orders/detail/${order.id}`} className="font-semibold">
                                         #{order.id}
                                     </Link>
-                                    <p>{format(order.createdDate, 'dd/MM/yyyy')}</p>
+                                    <p>{formatArrayDate(order.createdDate)}</p>
                                     <OrderStatus status={order.status} />
                                     <p className="text-right">$ {order.total}</p>
                                 </div>

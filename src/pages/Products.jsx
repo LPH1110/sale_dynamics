@@ -7,7 +7,8 @@ import { ImageWithFallback, Modal } from '~/components';
 import { UserAuth } from '~/contexts/AuthContext/AuthProvider';
 import { PlusIcon, TrashIcon } from '~/icons';
 import { actions, useStore } from '~/store';
-import { authorizeAdmin, request } from '~/utils';
+import { authorizeAdmin, hasChangedPassword, request } from '~/utils';
+import NotAllowAccess from './NotAllowAccess';
 
 const tableHeadings = [
     {
@@ -106,7 +107,9 @@ const Products = () => {
         fetchProducts();
     }, []);
 
-    return (
+    return !hasChangedPassword(user) ? (
+        <NotAllowAccess />
+    ) : (
         <section className="h-screen-content overflow-auto flex p-4 item-start justify-center">
             <section className="container space-y-4">
                 <section className="bg-white rounded-sm border p-1.5 shadow-md">

@@ -7,7 +7,9 @@ import { Modal } from '~/components';
 import { EnvelopeIcon, PlusIcon, TrashIcon } from '~/icons';
 import { userService } from '~/services';
 import { actions, useStore } from '~/store';
-import { authorizeAdmin } from '~/utils';
+import { authorizeAdmin, hasChangedPassword } from '~/utils';
+import NotAllowAccess from './NotAllowAccess';
+import { UserAuth } from '~/contexts/AuthContext/AuthProvider';
 
 const tableHeadings = [
     {
@@ -87,6 +89,7 @@ const Accounts = () => {
     const [checkAll, setCheckAll] = useState(false);
     const [accounts, setAccounts] = useState([]);
     const tableRef = useRef();
+    const { user } = UserAuth();
 
     const [state, dispatch] = useStore();
     const { checkedRows } = state;
@@ -100,7 +103,9 @@ const Accounts = () => {
         getUsers();
     }, []);
 
-    return (
+    return !hasChangedPassword(user) ? (
+        <NotAllowAccess />
+    ) : (
         <section className="h-screen-content overflow-auto p-4 flex items-start justify-center">
             <section className="container space-y-4">
                 {/* Head bar */}

@@ -1,15 +1,14 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
-import { EnvelopeIcon, PlusIcon, TrashIcon } from '~/icons';
-import { orderService, userService } from '~/services';
-import { actions, useStore } from '~/store';
-import { authorizeAdmin } from '~/utils';
-import { format } from 'date-fns';
 import { OrderStatus } from '~/components';
 import { UserAuth } from '~/contexts/AuthContext/AuthProvider';
+import { PlusIcon, TrashIcon } from '~/icons';
+import { orderService, userService } from '~/services';
+import { actions, useStore } from '~/store';
+import { authorizeAdmin, hasChangedPassword } from '~/utils';
+import NotAllowAccess from './NotAllowAccess';
 
 const tableHeadings = [
     {
@@ -70,7 +69,7 @@ const DataRow = ({ data }) => {
                     {data?.id}
                 </Link>
             </td>
-            <td className="text-sm p-3 hover:bg-gray-100">{format(data?.createdDate, 'dd/MM/yyyy HH:mm:ss')}</td>
+            {/* <td className="text-sm p-3 hover:bg-gray-100">{format(data?.createdDate, 'dd/MM/yyyy HH:mm:ss')}</td> */}
             <td className="text-sm p-3 hover:bg-gray-100">
                 {data?.customer?.firstname + ' ' + data?.customer?.lastname}
             </td>
@@ -100,7 +99,9 @@ const Orders = () => {
         getOrders();
     }, []);
 
-    return (
+    return !hasChangedPassword(user) ? (
+        <NotAllowAccess />
+    ) : (
         <section className="h-screen-content overflow-auto p-4 flex items-start justify-center">
             <section className="container space-y-4">
                 {/* Head bar */}

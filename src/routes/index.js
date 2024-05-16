@@ -15,10 +15,11 @@ import {
     Products,
     Signin,
     UnderDevelopment,
+    Dashboard,
 } from '~/pages';
 
 export const publicRoutes = [
-    { path: '/', protected: true, page: UnderDevelopment, layout: MainLayout },
+    { path: '/', protected: true, page: Dashboard, layout: MainLayout },
     { path: '/change-password/:username', protected: true, page: ChangePassword, layout: WrapLayout },
     { path: '/sign-in', page: Signin, layout: WrapLayout },
     { path: '/accounts', authority: 'admin', protected: true, page: Accounts, layout: MainLayout },

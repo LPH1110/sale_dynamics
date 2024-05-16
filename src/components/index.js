@@ -26,3 +26,8 @@ export { default as OrderConfirmCard } from './OrderConfirmCard';
 export { default as OrderStatus } from './OrderStatus';
 export { default as OrderItemRow } from './OrderItemRow';
 export { default as OrderDetailItemRow } from './OrderDetailItemRow';
+export { default as Revenue } from './statistics/Revenue';
+export { default as NumOrders } from './statistics/NumOrders';
+export { default as TopSellingProducts } from './statistics/TopSellingProducts';
+export { default as DateRangePicker } from './DateRangePicker';
+export { default as DatePicker } from './DatePicker';

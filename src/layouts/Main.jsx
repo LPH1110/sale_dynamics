@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { Tooltip, UserMenu } from '~/components';
 import { UserAuth } from '~/contexts/AuthContext/AuthProvider';
 import { CubeIcon, HomeIcon, ShoppingCartIcon, UserIcon } from '~/icons';
-import { authorizeAdmin } from '~/utils';
+import { authorizeAdmin, hasChangedPassword } from '~/utils';
 
 const navigations = [
     {
