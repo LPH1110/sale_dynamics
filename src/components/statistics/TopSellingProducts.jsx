@@ -5,6 +5,8 @@ import { DashboardContext } from '~/contexts/pool';
 import { request } from '~/utils';
 import { format } from 'date-fns';
 import { Spinner } from '~/icons';
+import images from '~/assets';
+import { FolderOpenIcon } from '@heroicons/react/24/outline';
 
 const topSolds = [
     {
@@ -57,14 +59,17 @@ const TopSellingProducts = () => {
                         Report
                     </Link>
                 </div>
-                {isLoading ? (
-                    <div className="flex items-center justify-center">
-                        <Spinner />
+                {topSolds.length <= 0 ? (
+                    <div className="flex flex-col gap-2 items-center justify-center">
+                        <div className="p-3 rounded-full bg-slate-100 text-slate-300">
+                            <FolderOpenIcon className="w-10 h-10" />
+                        </div>
+                        <p className="text-slate-500">There is no data to present</p>
                     </div>
                 ) : (
-                    topSolds.map((product) => (
-                        <Fragment key={product.barcode}>
-                            <ProductCard data={product} />
+                    topSolds.map((data) => (
+                        <Fragment key={data.productDTO.barcode}>
+                            <ProductCard data={data} />
                         </Fragment>
                     ))
                 )}

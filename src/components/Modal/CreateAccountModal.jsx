@@ -7,7 +7,7 @@ import { request } from '~/utils';
 import { toast } from 'react-toastify';
 import { Spinner } from '~/icons';
 import { userService } from '~/services';
-import sendVerificationMail from '~/services/mail';
+import { sendVerification } from '~/services/mail';
 
 const CreateAccountModal = ({ setAccounts, setOpen }) => {
     const { user } = UserAuth();
@@ -34,7 +34,7 @@ const CreateAccountModal = ({ setAccounts, setOpen }) => {
                     password: data.password,
                 });
                 // send mail
-                sendVerificationMail({
+                sendVerification({
                     to_email: data.email,
                     to_name: data.fullName,
                     from_name: 'Le Phu Hao',

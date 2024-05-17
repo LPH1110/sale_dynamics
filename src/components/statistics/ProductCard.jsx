@@ -6,15 +6,15 @@ const ProductCard = ({ data }) => {
     return (
         <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-                <img className="w-12 h-12 rounded-sm" src={data?.thumbnails[0].url} alt="" />
+                <img className="w-12 h-12 rounded-sm" src={data?.productDTO.thumbnails[0].url} alt="" />
                 <Link
-                    to={`/products/detail/${data?.barcode}`}
+                    to={`/products/detail/${data?.productDTO.barcode}`}
                     className="font-semibold text-blue-500 hover:text-blue-600 transition"
                 >
-                    {data?.name}
+                    {data?.productDTO.name}
                 </Link>
             </div>
-            {/* <h4 className="font-semibold text-slate-500">$ {commasNumber(data?.totalRevenue)}</h4> */}
+            <h4 className="font-semibold text-slate-500">$ {commasNumber(data?.totalRevenue)}</h4>
         </div>
     );
 };

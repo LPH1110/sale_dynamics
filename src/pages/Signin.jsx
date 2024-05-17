@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
+import { Modal } from '~/components';
 import { UserAuth } from '~/contexts/AuthContext/AuthProvider';
 import { Spinner } from '~/icons';
 
@@ -10,6 +11,10 @@ const Signin = () => {
     const [isLoading, setIsLoading] = useState(false);
     const { signin } = UserAuth();
     const navigate = useNavigate();
+    const [modal, setModal] = useState({
+        open: false,
+        action: '',
+    });
 
     const formik = useFormik({
         initialValues: {
@@ -26,8 +31,12 @@ const Signin = () => {
                 const res = await signin(data.username, data.password);
 
                 if (res?.userDTO) {
-                    toast.success('Login successfully!');
-                    navigate('/');
+                    if (res.userDTO.blocked) {
+                        setModal({ open: true, action: 'account-blocked-notification' });
+                    } else {
+                        toast.success('Login successfully!');
+                        navigate('/');
+                    }
                 } else {
                     toast.error('Credential is not found!');
                 }
@@ -91,6 +100,11 @@ const Signin = () => {
                     </button>
                 </form>
             </section>
+            <Modal
+                open={modal.open}
+                setOpen={(value) => setModal((prev) => ({ ...prev, open: value }))}
+                action={modal.action}
+            />
         </section>
     );
 };

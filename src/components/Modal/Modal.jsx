@@ -10,6 +10,9 @@ import ProductSearch from './ProductSearch';
 import CreateCustomerModal from './CreateCustomerModal';
 import CreateOrderModal from './CreateOrderModal';
 import OrderPaymentModal from './OrderPaymentModal';
+import BlockAccountConfirmation from './BlockAccountConfirmation';
+import AccountBlockedNotification from './AccountBlockedNotification';
+import AccountUnblockConfirm from './AccountUnblockConfirm';
 
 function Modal({ setCreateVariantForm, fetchProductDetail, tableName, open, setOpen, action, setAccounts }) {
     const [dialogs] = useState({
@@ -26,6 +29,11 @@ function Modal({ setCreateVariantForm, fetchProductDetail, tableName, open, setO
         'create-customer': <CreateCustomerModal setOpen={setOpen} />,
         'create-order': <CreateOrderModal setOpen={setOpen} />,
         'order-payment': <OrderPaymentModal setOpen={setOpen} />,
+        'confirm-block-account': (
+            <BlockAccountConfirmation setOpen={setOpen} setAccounts={setAccounts} tableName={tableName} />
+        ),
+        'account-blocked-notification': <AccountBlockedNotification setOpen={setOpen} />,
+        'account-unblock-confirmation': <AccountUnblockConfirm setOpen={setOpen} />,
     });
 
     const cancelButtonRef = useRef(null);

@@ -1,30 +1,43 @@
 import React, { useState } from 'react';
+import { toast } from 'react-toastify';
 import { Spinner } from '~/icons';
+import { userService } from '~/services';
+import { sendBlockedNoti } from '~/services/mail';
 import { useStore } from '~/store';
-import axios from 'axios';
+import { request } from '~/utils';
 
-const ConfirmDeletionModal = ({ tableName, data, setOpen }) => {
-    const [isLoading, setIsLoading] = useState(false);
+const BlockAccountConfirmation = ({ setAccounts, tableName, setOpen }) => {
     const [state] = useStore();
     const { checkedRows } = state;
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleDeleteAccounts = async () => {
-        try {
-            setIsLoading(true);
-            const res = await axios.post(`${process.env.REACT_APP_SERVER_URL}/${tableName}/delete`, checkedRows);
-        } catch (error) {
-            console.log(error);
-        } finally {
-            setIsLoading(false);
-        }
+    const handleBlockAccount = async () => {
+        setIsLoading(true);
+        await checkedRows.forEach(async (data) => {
+            try {
+                const res = await request.get(`admin/user/block?username=${data.username}`);
+                //send email
+                sendBlockedNoti({
+                    to_email: data.email,
+                    to_name: data.fullName,
+                    from_name: 'Le Phu Hao',
+                });
+            } catch (error) {
+                console.error('Failed to block account', error);
+            }
+        });
+        setIsLoading(false);
+        setOpen(false);
+        const users = await userService.fetchAll();
+        setAccounts(users);
     };
 
     return (
         <div className="w-full space-y-4 px-4">
             <div className="space-y-2">
-                <h2>Delete Confirmation</h2>
+                <h2>Block Account Confirmation</h2>
                 <p className="text-sm text-gray-600">
-                    Are you sure to permanently delete {checkedRows.length} {tableName}?
+                    Are you sure to block {checkedRows.length} {tableName}?
                 </p>
                 <ul>
                     {checkedRows.map((checked) => (
@@ -37,7 +50,7 @@ const ConfirmDeletionModal = ({ tableName, data, setOpen }) => {
             <div className="flex justify-end items-center gap-2 text-sm">
                 <button
                     type="button"
-                    onClick={handleDeleteAccounts}
+                    onClick={handleBlockAccount}
                     className="bg-blue-500 min-w-[4rem] flex justify-center items-center hover:bg-blue-600 transition font-semibold text-white py-2 px-4 rounded-sm"
                 >
                     {isLoading ? <Spinner /> : 'Continue'}
@@ -54,4 +67,4 @@ const ConfirmDeletionModal = ({ tableName, data, setOpen }) => {
     );
 };
 
-export default ConfirmDeletionModal;
+export default BlockAccountConfirmation;

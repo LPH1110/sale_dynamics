@@ -1,4 +1,4 @@
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon, NoSymbolIcon } from '@heroicons/react/24/outline';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -64,17 +64,41 @@ const DataRow = ({ data }) => {
         };
     }, []);
 
-    return (
-        <tr className={checked ? 'bg-blue-100' : 'hover:bg-blue-100 bg-white'}>
-            <td className="text-center p-3 hover:bg-gray-100">
-                <input onChange={handleChecked} ref={checkRef} className="w-4 h-4" type="checkbox" />
-            </td>
-            <td className="text-sm p-3 hover:bg-gray-100">{data.username}</td>
-            <td className="text-sm p-3 hover:bg-gray-100 hover:underline">
+    return data.blocked ? (
+        <tr className="text-slate-500">
+            {!authorizeAdmin(data) ? (
+                <td className="text-center p-3">
+                    <input disabled className="w-4 h-4" type="checkbox" />
+                </td>
+            ) : (
+                <td></td>
+            )}
+            <td className="text-sm p-3 hover:underline">
                 <NavLink className="text-blue-500" to={`/accounts/detail/${data.username}`}>
-                    {data.fullName}
+                    {data.username}
                 </NavLink>
             </td>
+            <td className="text-sm p-3">{data.fullName}</td>
+            <td className="text-sm p-3">{data.email}</td>
+            <td className="text-sm p-3">{data.enabled && 'yes'}</td>
+            <td className="text-sm p-3">{authorizeAdmin(data) ? 'admin' : ''}</td>
+            <td className="text-sm p-3">{data.phone}</td>
+        </tr>
+    ) : (
+        <tr className={checked ? 'bg-blue-100' : 'hover:bg-blue-100 bg-white'}>
+            {!authorizeAdmin(data) ? (
+                <td className="text-center p-3 hover:bg-gray-100">
+                    <input onChange={handleChecked} ref={checkRef} className="w-4 h-4" type="checkbox" />
+                </td>
+            ) : (
+                <td></td>
+            )}
+            <td className="text-sm p-3 hover:bg-gray-100 hover:underline">
+                <NavLink className="text-blue-500" to={`/accounts/detail/${data.username}`}>
+                    {data.username}
+                </NavLink>
+            </td>
+            <td className="text-sm p-3 hover:bg-gray-100">{data.fullName}</td>
             <td className="text-sm p-3 hover:bg-gray-100">{data.email}</td>
             <td className="text-sm p-3 hover:bg-gray-100">{data.enabled && 'yes'}</td>
             <td className="text-sm p-3 hover:bg-gray-100">{authorizeAdmin(data) ? 'admin' : ''}</td>
@@ -153,6 +177,24 @@ const Accounts = () => {
                                 <EnvelopeIcon />
                             </span>{' '}
                             Resend email
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={() => {
+                                if (checkedRows.length > 0) {
+                                    setModalAction('confirm-block-account');
+                                    setOpenModal(true);
+                                } else {
+                                    toast.info('Please select at least a row to block');
+                                }
+                            }}
+                            className=" flex gap-2 items-center justify-center px-3 py-2 text-sm rounded-sm hover:bg-gray-100"
+                        >
+                            <span className="w-5 h-5 text-red-500">
+                                <NoSymbolIcon />
+                            </span>{' '}
+                            Block account
                         </button>
                         <div className="w-full ml-2 flex gap-2 items-center border py-1 px-2 rounded-sm ring-2 ring-transparent focus-within:ring-blue-400 transition">
                             <button type="button" className="w-4 h-4">

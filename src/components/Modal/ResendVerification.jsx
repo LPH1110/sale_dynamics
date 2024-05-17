@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { Fragment, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Spinner } from '~/icons';
-import sendVerificationMail from '~/services/mail';
+import {sendVerification} from '~/services/mail';
 import { useStore } from '~/store';
 import { request } from '~/utils';
 
@@ -20,7 +20,7 @@ const ResendVerification = ({ setOpen }) => {
                     const token = await request.get(`admin/generate-verify-token?username=${row.username}`);
                     // send email
                     console.log(token);
-                    await sendVerificationMail({
+                    await sendVerification({
                         to_email: row.email,
                         to_name: row.fullName,
                         from_name: 'Le Phu Hao',

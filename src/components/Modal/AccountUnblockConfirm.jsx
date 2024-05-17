@@ -1,43 +1,38 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import AccountDetailContext from '~/contexts/pool/AccountDetailContext';
 import { Spinner } from '~/icons';
-import { useStore } from '~/store';
-import axios from 'axios';
+import { request } from '~/utils';
 
-const ConfirmDeletionModal = ({ tableName, data, setOpen }) => {
+const AccountUnblockConfirm = ({ setOpen }) => {
     const [isLoading, setIsLoading] = useState(false);
-    const [state] = useStore();
-    const { checkedRows } = state;
+    const { account } = useContext(AccountDetailContext);
+    const navigate = useNavigate();
 
-    const handleDeleteAccounts = async () => {
+    const handleUnblock = async () => {
         try {
             setIsLoading(true);
-            const res = await axios.post(`${process.env.REACT_APP_SERVER_URL}/${tableName}/delete`, checkedRows);
+            const res = await request.get(`admin/user/unblock?username=${account.username}`);
+            toast.success(res);
         } catch (error) {
-            console.log(error);
+            console.error('Failed to unblock this account', error);
         } finally {
             setIsLoading(false);
+            setOpen(false);
+            navigate('/accounts');
         }
     };
-
     return (
         <div className="w-full space-y-4 px-4">
             <div className="space-y-2">
-                <h2>Delete Confirmation</h2>
-                <p className="text-sm text-gray-600">
-                    Are you sure to permanently delete {checkedRows.length} {tableName}?
-                </p>
-                <ul>
-                    {checkedRows.map((checked) => (
-                        <li key={checked.id} className="text-sm">
-                            {checked.username}
-                        </li>
-                    ))}
-                </ul>
+                <h2 className="text-xl capitalize">Account Unblock Confirmation</h2>
+                <p className="text-sm text-gray-600">Are you sure to unlock this account?</p>
             </div>
             <div className="flex justify-end items-center gap-2 text-sm">
                 <button
                     type="button"
-                    onClick={handleDeleteAccounts}
+                    onClick={handleUnblock}
                     className="bg-blue-500 min-w-[4rem] flex justify-center items-center hover:bg-blue-600 transition font-semibold text-white py-2 px-4 rounded-sm"
                 >
                     {isLoading ? <Spinner /> : 'Continue'}
@@ -54,4 +49,4 @@ const ConfirmDeletionModal = ({ tableName, data, setOpen }) => {
     );
 };
 
-export default ConfirmDeletionModal;
+export default AccountUnblockConfirm;
