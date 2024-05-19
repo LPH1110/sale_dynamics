@@ -12,7 +12,7 @@ const OrderInvoice = forwardRef(({ orderDetail }, ref) => {
         <div className="p-6 space-y-12" ref={ref}>
             <header>
                 <h1 className="text-2xl font-semibold text-center">Sale Dynamics</h1>
-                <div className="flex items-center justify-between">
+                <div className="flex items-start justify-between">
                     <div className="space-y-4">
                         <div className="space-y-2">
                             <h4 className="uppercase font-semibold text-lg">Issued to:</h4>

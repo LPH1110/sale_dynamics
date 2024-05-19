@@ -5,16 +5,18 @@ import { toast } from 'react-toastify';
 import { Modal, OrderStatus } from '~/components';
 import { Spinner } from '~/icons';
 import { userService } from '~/services';
-import { authorizeAdmin, formatArrayDate, hasChangedPassword, request } from '~/utils';
+import { authorizeAdmin, formatArrayDate, hasChangedPassword, isSameUser, request } from '~/utils';
 import NotAllowAccess from './NotAllowAccess';
 import { UserAuth } from '~/contexts/AuthContext/AuthProvider';
-import { FolderOpenIcon, LockOpenIcon } from '@heroicons/react/24/outline';
+import { ArrowUpTrayIcon, FolderOpenIcon, LockOpenIcon } from '@heroicons/react/24/outline';
+import { UserCircleIcon } from '@heroicons/react/24/solid';
 import AccountDetailContext from '~/contexts/pool/AccountDetailContext';
 
 const AccountDetail = () => {
     const { username } = useParams();
     const [account, setAccount] = useState(null);
     const [saveChangesLoading, setSaveChangesLoading] = useState(false);
+    const [avatar, setAvatar] = useState('');
     const [form, setForm] = useState({
         fullName: '',
         phone: '',
@@ -55,21 +57,70 @@ const AccountDetail = () => {
         }
     };
 
+    const handleChangeAvatar = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setAvatar(file);
+
+        setModal({
+            action: 'change-avatar',
+            open: true,
+        });
+    };
+
     return !hasChangedPassword(user) ? (
         <NotAllowAccess />
     ) : (
-        <AccountDetailContext.Provider value={{ account }}>
+        <AccountDetailContext.Provider value={{ account, avatar, setAccount }}>
             <section className="h-screen-content overflow-auto py-4 flex items-start justify-center">
-                <section className="container space-y-4">
-                    <section className="flex items-start justify-between bg-white shadow-sm border rounded-md p-4">
+                <section className="container space-y-4 px-4">
+                    {/* Header */}
+                    <section className="flex items-start justify-between py-4">
                         <section className="flex items-center gap-4">
                             {/* Avatar */}
                             <section>
-                                <div className="w-24 h-24 bg-gray-100 rounded-full"></div>
+                                <label
+                                    onClick={(e) => {
+                                        if (!isSameUser(user, account)) {
+                                            e.preventDefault();
+                                        }
+                                    }}
+                                    htmlFor="user-avatar"
+                                >
+                                    <div className="w-24 h-24 relative text-center rounded-full">
+                                        <div className="relative w-full pb-[100%]">
+                                            {account?.avatarURL ? (
+                                                <img
+                                                    className="rounded-full m-auto block max-w-full max-h-full absolute inset-0"
+                                                    src={account?.avatarURL}
+                                                    alt={account?.username}
+                                                />
+                                            ) : (
+                                                <UserCircleIcon className="text-slate-300 m-auto block max-w-full max-h-full absolute inset-0" />
+                                            )}
+                                            {/* Overlay */}
+                                            {isSameUser(user, account) && (
+                                                <div className="rounded-full text-white flex items-center justify-center gap-2 w-full h-full bg-gray-700 absolute z-3 opacity-0 hover:opacity-100 hover:bg-gray-700/60 transition cursor-pointer">
+                                                    <ArrowUpTrayIcon className="w-6 h-6" />
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </label>
+                                <input
+                                    readOnly={isSameUser(user, account)}
+                                    type="file"
+                                    className="hidden"
+                                    name="user-avatar"
+                                    id="user-avatar"
+                                    onChange={handleChangeAvatar}
+                                    accept="image/*"
+                                />
                             </section>
                             {/* Info */}
                             <section>
-                                <h2 className="font-semibold">{account?.fullName}</h2>
+                                <h2 className="font-semibold text-2xl">{account?.fullName}</h2>
                                 <div>
                                     <Link to={`mailto:${account?.email}`} className="text-sm text-gray-600">
                                         {account?.email}
@@ -131,7 +182,7 @@ const AccountDetail = () => {
                                                         placeholder="---"
                                                         name="fullName"
                                                         id="fullName"
-                                                        readOnly={user?.username.localeCompare(account?.username) !== 0}
+                                                        readOnly={isSameUser(user, account)}
                                                     />
                                                 </div>
                                                 <div className="space-y-2 w-full">
@@ -142,7 +193,7 @@ const AccountDetail = () => {
                                                         name="phoneNumber"
                                                         id="phoneNumber"
                                                         value={form.phone}
-                                                        readOnly={user?.username.localeCompare(account?.username) !== 0}
+                                                        readOnly={isSameUser(user, account)}
                                                         onChange={(e) =>
                                                             setForm((prev) => ({ ...prev, phone: e.target.value }))
                                                         }
@@ -154,7 +205,7 @@ const AccountDetail = () => {
                                                         type="text"
                                                         placeholder="---"
                                                         value={form.email}
-                                                        readOnly={user?.username.localeCompare(account?.username) !== 0}
+                                                        readOnly={isSameUser(user, account)}
                                                         onChange={(e) =>
                                                             setForm((prev) => ({ ...prev, email: e.target.value }))
                                                         }

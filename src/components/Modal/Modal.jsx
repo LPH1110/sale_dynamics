@@ -13,11 +13,22 @@ import OrderPaymentModal from './OrderPaymentModal';
 import BlockAccountConfirmation from './BlockAccountConfirmation';
 import AccountBlockedNotification from './AccountBlockedNotification';
 import AccountUnblockConfirm from './AccountUnblockConfirm';
+import ChangeAvatar from './ChangeAvatar';
 
-function Modal({ setCreateVariantForm, fetchProductDetail, tableName, open, setOpen, action, setAccounts }) {
+function Modal({
+    setCreateVariantForm,
+    fetchProductDetail,
+    tableName,
+    open,
+    setOpen,
+    action,
+    setAccounts,
+    setProducts,
+    setData,
+}) {
     const [dialogs] = useState({
         'create-account': <CreateAccountModal setAccounts={setAccounts} setOpen={setOpen} />,
-        'confirm-delete': <ConfirmDeletionModal tableName={tableName} setOpen={setOpen} />,
+        'confirm-delete': <ConfirmDeletionModal setData={setData} tableName={tableName} setOpen={setOpen} />,
         'confirm-clear-image': <ConfirmClearImage setOpen={setOpen} />,
         'confirm-cancel-product-updates': (
             <ConfirmCancelProductUpdates fetchProductDetail={fetchProductDetail} setOpen={setOpen} />
@@ -34,6 +45,7 @@ function Modal({ setCreateVariantForm, fetchProductDetail, tableName, open, setO
         ),
         'account-blocked-notification': <AccountBlockedNotification setOpen={setOpen} />,
         'account-unblock-confirmation': <AccountUnblockConfirm setOpen={setOpen} />,
+        'change-avatar': <ChangeAvatar setOpen={setOpen} />,
     });
 
     const cancelButtonRef = useRef(null);

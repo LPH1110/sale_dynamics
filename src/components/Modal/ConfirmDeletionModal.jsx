@@ -1,21 +1,33 @@
 import React, { useState } from 'react';
 import { Spinner } from '~/icons';
-import { useStore } from '~/store';
+import { actions, useStore } from '~/store';
 import axios from 'axios';
+import { request } from '~/utils';
+import { productService } from '~/services';
 
-const ConfirmDeletionModal = ({ tableName, data, setOpen }) => {
+const ConfirmDeletionModal = ({ tableName, setData, setOpen }) => {
     const [isLoading, setIsLoading] = useState(false);
-    const [state] = useStore();
+    const [state, dispatch] = useStore();
     const { checkedRows } = state;
 
-    const handleDeleteAccounts = async () => {
+    const handleDelete = async () => {
         try {
             setIsLoading(true);
-            const res = await axios.post(`${process.env.REACT_APP_SERVER_URL}/${tableName}/delete`, checkedRows);
+            await request.post(`${tableName}/disable`, JSON.stringify(checkedRows));
+            switch (tableName) {
+                case 'products':
+                    const products = await request.get(`products`);
+                    setData(products);
+                    break;
+                default:
+                    break;
+            }
         } catch (error) {
-            console.log(error);
+            console.error('Failed to delete data', error);
         } finally {
+            dispatch(actions.clearCheckedRows());
             setIsLoading(false);
+            setOpen(false);
         }
     };
 
@@ -24,7 +36,7 @@ const ConfirmDeletionModal = ({ tableName, data, setOpen }) => {
             <div className="space-y-2">
                 <h2>Delete Confirmation</h2>
                 <p className="text-sm text-gray-600">
-                    Are you sure to permanently delete {checkedRows.length} {tableName}?
+                    Are you sure to permanently delete {checkedRows.length} {tableName}? There is no undo action.
                 </p>
                 <ul>
                     {checkedRows.map((checked) => (
@@ -37,7 +49,7 @@ const ConfirmDeletionModal = ({ tableName, data, setOpen }) => {
             <div className="flex justify-end items-center gap-2 text-sm">
                 <button
                     type="button"
-                    onClick={handleDeleteAccounts}
+                    onClick={handleDelete}
                     className="bg-blue-500 min-w-[4rem] flex justify-center items-center hover:bg-blue-600 transition font-semibold text-white py-2 px-4 rounded-sm"
                 >
                     {isLoading ? <Spinner /> : 'Continue'}

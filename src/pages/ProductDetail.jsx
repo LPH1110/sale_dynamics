@@ -83,7 +83,16 @@ const ProductDetail = () => {
         setProductDetail(saved);
     };
 
-    return (
+    return !productDetail ? (
+        <div className="flex items-center justify-center p-6 h-screen-content">
+            <div className="text-center">
+                <h1 className="text-2xl font-semibold capitalize">404 Product not found</h1>
+                <p className="text-gray-600 text-lg my-4">
+                    We are sorry for this inconvenience. This product has been disabled.
+                </p>
+            </div>
+        </div>
+    ) : (
         <form onSubmit={handleSubmit} className="relative h-screen-content overflow-auto">
             <Transition
                 as={Fragment}

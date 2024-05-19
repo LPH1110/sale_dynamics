@@ -2,7 +2,7 @@ import { ChevronDownIcon, PrinterIcon } from '@heroicons/react/24/outline';
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import ReactToPrint from 'react-to-print';
-import { Modal, OrderConfirmCard, OrderDetailItemRow, OrderStatus } from '~/components';
+import { CustomerCard, Modal, OrderConfirmCard, OrderDetailItemRow, OrderStatus } from '~/components';
 import { OrderPaymentContext } from '~/contexts/pool';
 import { Spinner } from '~/icons';
 import { orderService } from '~/services';
@@ -224,6 +224,7 @@ const OrderDetail = () => {
                                     </Link>
                                 </div>
                             </div>
+                            <CustomerCard customer={orderDetail?.customer} />
                         </section>
                     </section>
                 </section>

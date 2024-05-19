@@ -34,7 +34,7 @@ const tableHeadings = [
     },
 ];
 
-const DataRow = ({ setCheckedRows, data }) => {
+const DataRow = ({ data }) => {
     const checkRef = useRef();
     const [checked, setChecked] = useState(false);
     const [, dispatch] = useStore();
@@ -84,13 +84,10 @@ const Products = () => {
     const { user } = UserAuth();
     const [openModal, setOpenModal] = useState(false);
     const [modalAction, setModalAction] = useState('');
-    const [checkedRows, setCheckedRows] = useState([]);
     const [checkAll, setCheckAll] = useState(false);
     const [products, setProducts] = useState([]);
     const navigate = useNavigate();
     const tableRef = useRef();
-
-    console.log(products);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -130,9 +127,10 @@ const Products = () => {
                         ) : (
                             ''
                         )}
-                        {user?.isAdmin ? (
+                        {authorizeAdmin(user) ? (
                             <button
                                 type="button"
+                                r
                                 onClick={() => {
                                     setModalAction('confirm-delete');
                                     setOpenModal(true);
@@ -200,13 +198,19 @@ const Products = () => {
                         <tbody>
                             {products.map((product) => (
                                 <Fragment key={product.barcode}>
-                                    <DataRow setCheckedRows={setCheckedRows} data={product} />
+                                    <DataRow data={product} />
                                 </Fragment>
                             ))}
                         </tbody>
                     </table>
                 </section>
-                <Modal tableName="products" open={openModal} setOpen={setOpenModal} action={modalAction} />
+                <Modal
+                    tableName="products"
+                    setData={setProducts}
+                    open={openModal}
+                    setOpen={setOpenModal}
+                    action={modalAction}
+                />
             </section>
         </section>
     );

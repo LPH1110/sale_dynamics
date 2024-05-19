@@ -1,82 +1,41 @@
-import { MagnifyingGlassIcon, PlusIcon, UserCircleIcon } from '@heroicons/react/24/outline';
-import { Fragment, useContext, useEffect, useState } from 'react';
-import { CreateOrderContext } from '~/contexts/pool';
-import { customerService } from '~/services';
-import { useDebounce } from '~/store';
+import { XMarkIcon } from '@heroicons/react/24/solid';
+import React from 'react';
+import { Link } from 'react-router-dom';
 
-const CustomerCard = ({ setModal }) => {
-    const [searchValue, setSearchValue] = useState('');
-    const [searchResult, setSearchResult] = useState([]);
-    const { setCustomer } = useContext(CreateOrderContext);
-
-    const debounce = useDebounce(searchValue, 1000);
-
-    useEffect(() => {
-        const getCustomers = async () => {
-            let customers = await customerService.findByKeyword(searchValue);
-            setSearchResult(customers);
-        };
-
-        if (searchValue.trim().length > 0) {
-            getCustomers();
-        }
-    }, [debounce]);
-
+const CustomerCard = ({ customer, setCustomer }) => {
     return (
-        <div className="bg-white rounded-sm shadow-md border space-y-4 text-sm">
+        <div className="bg-white rounded-sm shadow-md border text-sm">
             <div className="p-4 border-b flex items-center justify-between">
-                <h4 className="font-semibold">Customer</h4>
-                <button
-                    onClick={() => setModal({ action: 'create-customer', open: true })}
-                    type="button"
-                    className="text-blue-500 hover:text-blue-600 transition flex items-center gap-1"
-                >
-                    <span>
-                        <PlusIcon className="w-3 h-3" />
-                    </span>
-                    Create new
-                </button>
+                <h4 className="font-semibold">Customer Information</h4>
+                {setCustomer && (
+                    <button onClick={() => setCustomer(null)} type="button">
+                        <XMarkIcon className="w-5 h-5" />
+                    </button>
+                )}
             </div>
-            {/* Search bar */}
-            <div className="px-4 pb-4">
-                <div className="relative flex items-center border rounded-md flex-1 ring-1 ring-transparent focus-within:ring-blue-400 transition">
-                    <span className="px-2">
-                        <MagnifyingGlassIcon className="w-4 h-4" />
-                    </span>
-                    <input
-                        value={searchValue}
-                        onChange={(e) => setSearchValue(e.target.value)}
-                        type="text"
-                        placeholder="Search by phone or name"
-                        className="w-full text-sm py-2 rounded-r-md"
-                    />
-                    {searchResult.length > 0 && (
-                        <div className="bg-white inset-x-0 absolute top-[2.5rem] rounded-md border shadow-sm py-2">
-                            <ul>
-                                {searchResult.map((customer) => {
-                                    return (
-                                        <Fragment key={customer}>
-                                            <li
-                                                onClick={() => setCustomer(customer)}
-                                                className="p-2 hover:bg-blue-50 bg-white transition cursor-pointer flex items-center gap-2"
-                                            >
-                                                <div className="flex items-center justify-center text-slate-500">
-                                                    <UserCircleIcon className="w-8 h-8" />
-                                                </div>
-                                                <div className="space-y-1">
-                                                    <h4>
-                                                        {customer.firstname} {customer.lastname}
-                                                    </h4>
-                                                    <p className="text-xs text-slate-500">{customer.phone}</p>
-                                                </div>
-                                            </li>
-                                        </Fragment>
-                                    );
-                                })}
-                            </ul>
-                        </div>
-                    )}
+            <div className="p-4 space-y-1">
+                <Link
+                    className="font-semibold text-blue-500 hover:text-blue-600 transition"
+                    to={`/customers/detail/${customer?.phone}`}
+                >
+                    {customer?.firstname + ' ' + customer?.lastname}
+                </Link>
+                <p className="text-slate-500">{customer?.phone}</p>
+                <p className="text-slate-500">{customer?.email}</p>
+            </div>
+            <div className="p-4 border-y space-y-4">
+                <div className="space-y-2">
+                    <h4 className="font-semibold">Shipment</h4>
+                    <p className="text-slate-500 italic">No company info</p>
                 </div>
+                <div className="space-y-2">
+                    <h4 className="font-semibold">Address</h4>
+                    <p className="text-slate-500">{customer?.address}</p>
+                </div>
+            </div>
+            <div className="px-4 space-y-2 py-4">
+                <h4 className="font-semibold">Note</h4>
+                <p className="italic text-slate-500">No notes about customer</p>
             </div>
         </div>
     );

@@ -7,7 +7,7 @@ import { UserAuth } from '~/contexts/AuthContext/AuthProvider';
 import { PlusIcon, TrashIcon } from '~/icons';
 import { orderService, userService } from '~/services';
 import { actions, useStore } from '~/store';
-import { authorizeAdmin, hasChangedPassword } from '~/utils';
+import { authorizeAdmin, formatArrayDate, hasChangedPassword } from '~/utils';
 import NotAllowAccess from './NotAllowAccess';
 
 const tableHeadings = [
@@ -69,7 +69,7 @@ const DataRow = ({ data }) => {
                     {data?.id}
                 </Link>
             </td>
-            {/* <td className="text-sm p-3 hover:bg-gray-100">{format(data?.createdDate, 'dd/MM/yyyy HH:mm:ss')}</td> */}
+            <td className="text-sm p-3 hover:bg-gray-100">{formatArrayDate(data?.createdDate)}</td>
             <td className="text-sm p-3 hover:bg-gray-100">
                 {data?.customer?.firstname + ' ' + data?.customer?.lastname}
             </td>

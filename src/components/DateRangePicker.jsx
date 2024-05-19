@@ -23,24 +23,24 @@ const DateRangePicker = ({ children }) => {
 
     const sortedDays = (currentDate) => {
         const dates = getDatesInMonth(currentDate?.getMonth(), currentDate?.getFullYear());
-        let startDate = dates[0];
-        let endDate = dates[dates.length - 1];
+        // let startDate = dates[0];
+        // let endDate = dates[dates.length - 1];
 
-        let startDateIndex = startDate.getDay();
+        // let startDateIndex = startDate.getDay();
 
-        for (let i = 1; i <= startDateIndex; i++) {
-            let date = new Date();
-            date.setDate(startDate.getDate() - i);
-            dates.unshift(date);
-        }
+        // for (let i = 1; i <= startDateIndex; i++) {
+        //     let date = new Date();
+        //     date.setDate(startDate.getDate() - i);
+        //     dates.unshift(date);
+        // }
 
-        let i = 1;
-        while (dates.length < 42) {
-            let date = new Date();
-            date.setDate(endDate.getDate() + i);
-            dates.push(date);
-            i += 1;
-        }
+        // let i = 1;
+        // while (dates.length < 42) {
+        //     let date = new Date();
+        //     date.setDate(endDate.getDate() + i);
+        //     dates.push(date);
+        //     i += 1;
+        // }
 
         return dates;
     };
@@ -83,9 +83,18 @@ const DateRangePicker = ({ children }) => {
                     <div className="flex gap-2">
                         <div className="min-w-[12rem] px-4 max-h-[23rem] overflow-auto">
                             <ul>
-                                {dateRangeKeys.map((key) => (
+                                {Object.entries(dateRangeKeys).map(([key, value]) => (
                                     <Fragment key={key}>
-                                        <li className="cursor-pointer rounded-md py-3 px-2 hover:bg-blue-50 transition">
+                                        <li
+                                            onClick={() => {
+                                                setRange({
+                                                    startDate: value.startDate,
+                                                    endDate: value.endDate,
+                                                    isSelecting: false,
+                                                });
+                                            }}
+                                            className="cursor-pointer rounded-md py-3 px-2 hover:bg-blue-50 transition"
+                                        >
                                             {key}
                                         </li>
                                     </Fragment>
@@ -119,11 +128,11 @@ const DateRangePicker = ({ children }) => {
                                 </div>
                                 <div className="space-y-2">
                                     <div className="grid grid-cols-7">
-                                        {dayNames.map((day) => (
+                                        {/* {dayNames.map((day) => (
                                             <Fragment key={day}>
                                                 <p className="font-semibold text-center">{day}</p>
                                             </Fragment>
-                                        ))}
+                                        ))} */}
                                     </div>
                                     <div className="grid grid-cols-7">
                                         {sortedDays(range?.startDate).map((date, index) => (
@@ -141,7 +150,7 @@ const DateRangePicker = ({ children }) => {
                                                             } else {
                                                                 setRange((prev) => ({
                                                                     ...prev,
-                                                                    isSelecting: true,
+                                                                    isSelecting: false,
                                                                     endDate: date,
                                                                 }));
                                                             }

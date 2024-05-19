@@ -60,7 +60,9 @@ const Main = ({ children }) => {
                     <UserMenu>
                         {/* Avatar */}
                         <Tooltip message={isAdmin ? 'Account Manager' : 'Account Staff'}>
-                            <div className="ring-4 ring-transparent hover:ring-blue-700 transition h-7 w-7 rounded-full bg-white"></div>
+                            <div className="ring-4 ring-transparent hover:ring-blue-700 transition h-7 w-7 rounded-full ">
+                                <img className="rounded-full" src={user?.avatarURL} alt="avatar" />
+                            </div>
                         </Tooltip>
                     </UserMenu>
                 </div>

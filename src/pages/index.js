@@ -14,3 +14,5 @@ export { default as CreateVariant } from './CreateVariant';
 export { default as CreateOrder } from './CreateOrder';
 export { default as OrderDetail } from './OrderDetail';
 export { default as OrderRefund } from './OrderRefund';
+export { default as Customers } from './Customers';
+export { default as CustomerDetail } from './CustomerDetail';

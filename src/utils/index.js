@@ -7,3 +7,5 @@ export { default as isTomorrow } from './isTomorrow';
 export { default as isDateInRange } from './isDateInRange';
 export { default as formatArrayDate } from './formatArrayDate';
 export { default as hasChangedPassword } from './hasChangedPassword';
+export { default as isSameUser } from './isSameUser';
+export { default as jsonToFormData } from './jsonToFormData';

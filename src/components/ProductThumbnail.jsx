@@ -14,21 +14,21 @@ const ProductThumbnail = ({ productDetail, setProductDetail, setOpenModal, setMo
     const uploadImages = async (e) => {
         let files = Array.from(e.target.files);
         for (let i = 0; i < files.length; i++) {
-            let thumbnail = await saveProductThumbnail(productDetail.barcode, files[i]);
+            let thumbnail = await saveProductThumbnail(productDetail?.barcode, files[i]);
             setThumbnails((prev) => [...prev, thumbnail]);
         }
     };
 
     useEffect(() => {
         if (productDetail !== null) {
-            setThumbnails(productDetail.thumbnails);
+            setThumbnails(productDetail?.thumbnails);
         }
     }, [productDetail]);
 
     useEffect(() => {
         const clearImage = async () => {
             await productService.deleteProductThumbnail({
-                barcode: productDetail.barcode,
+                barcode: productDetail?.barcode,
                 thumbnailId: clearedId,
             });
         };
@@ -64,15 +64,15 @@ const ProductThumbnail = ({ productDetail, setProductDetail, setOpenModal, setMo
                 </Tooltip>
             </div>
             <div className="h-[1px] my-4 w-full bg-gray-100"></div>
-            <div>   
-                {thumbnails.length > 0 ? (
+            <div>
+                {thumbnails?.length > 0 ? (
                     <GalleryCard clearImage={handleClearImage} images={thumbnails} />
                 ) : (
                     <label htmlFor="images">
                         <div className="text-blue-500 gap-2 flex flex-col items-center justify-center p-6 border border-dashed hover:bg-blue-50 transition cursor-pointer rounded-md text-center text-sm">
                             <PhotoIcon className="w-10 h-10 text-gray-400" />
                             <h4>Add images</h4>
-                            <p> 
+                            <p>
                                 Add from URL <span className="text-gray-600">(images/videos)</span>
                             </p>
                         </div>

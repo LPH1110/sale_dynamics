@@ -1,12 +1,11 @@
 import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import { useDebounce } from '~/store';
 
 import { Transition } from '@headlessui/react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { CustomerCard, Modal, OrderItemRow } from '~/components';
+import { CustomerCard, Modal, OrderItemRow, SearchCustomerCard } from '~/components';
 import { CreateOrderContext } from '~/contexts/pool';
 
 const CreateOrder = () => {
@@ -227,25 +226,9 @@ const CreateOrder = () => {
                             <section className="space-y-4">
                                 {/* Customer */}
                                 {customer ? (
-                                    <div className="bg-white rounded-sm shadow-md border space-y-4 text-sm">
-                                        <div className="p-4 border-b flex items-center justify-between">
-                                            <h4 className="font-semibold">Customer Information</h4>
-                                            <button onClick={() => setCustomer(null)} type="button">
-                                                <XMarkIcon className="w-5 h-5" />
-                                            </button>
-                                        </div>
-                                        <div className="px-4 pb-4 space-y-1">
-                                            <Link
-                                                className="font-semibold text-blue-500 hover:text-blue-600 transition"
-                                                to={`/customers/detail/${customer.firstname}`}
-                                            >
-                                                {customer.firstname + ' ' + customer.lastname}
-                                            </Link>
-                                            <p className="text-slate-500">{customer.phone}</p>
-                                        </div>
-                                    </div>
+                                    <CustomerCard customer={customer} setCustomer={setCustomer} />
                                 ) : (
-                                    <CustomerCard setModal={setModal} />
+                                    <SearchCustomerCard setModal={setModal} />
                                 )}
                             </section>
                         </section>
