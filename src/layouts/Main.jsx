@@ -1,9 +1,10 @@
+import { UsersIcon } from '@heroicons/react/24/outline';
 import { Fragment } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Tooltip, UserMenu } from '~/components';
 import { UserAuth } from '~/contexts/AuthContext/AuthProvider';
 import { CubeIcon, HomeIcon, ShoppingCartIcon, UserIcon } from '~/icons';
-import { authorizeAdmin, hasChangedPassword } from '~/utils';
+import { authorizeAdmin } from '~/utils';
 
 const navigations = [
     {
@@ -20,7 +21,7 @@ const navigations = [
         title: 'Accounts',
         icon: (
             <span className="w-4 h-4 flex items-center">
-                <UserIcon width={4} height={4} />
+                <UserIcon />
             </span>
         ),
         isAdmin: true,
@@ -30,7 +31,7 @@ const navigations = [
         title: 'Products',
         icon: (
             <span className="w-4 h-4 flex items-center">
-                <CubeIcon width={4} height={4} />
+                <CubeIcon />
             </span>
         ),
     },
@@ -39,7 +40,16 @@ const navigations = [
         title: 'Orders',
         icon: (
             <span className="w-4 h-4 flex items-center">
-                <ShoppingCartIcon width={4} height={4} />
+                <ShoppingCartIcon />
+            </span>
+        ),
+    },
+    {
+        path: '/customers',
+        title: 'Customers',
+        icon: (
+            <span className="w-4 h-4 flex items-center">
+                <UsersIcon />
             </span>
         ),
     },
@@ -60,9 +70,15 @@ const Main = ({ children }) => {
                     <UserMenu>
                         {/* Avatar */}
                         <Tooltip message={isAdmin ? 'Account Manager' : 'Account Staff'}>
-                            <div className="ring-4 ring-transparent hover:ring-blue-700 transition h-7 w-7 rounded-full ">
-                                <img className="rounded-full" src={user?.avatarURL} alt="avatar" />
-                            </div>
+                            {user?.avatarURL ? (
+                                <div className="ring-4 ring-transparent hover:ring-blue-700 transition h-7 w-7 rounded-full">
+                                    <img className="rounded-full" src={user?.avatarURL} alt="avatar" />
+                                </div>
+                            ) : (
+                                <div className="ring-4 ring-transparent p-1 bg-slate-200 text-slate-500 hover:ring-blue-700 transition h-7 w-7 rounded-full">
+                                    <UserIcon />
+                                </div>
+                            )}
                         </Tooltip>
                     </UserMenu>
                 </div>

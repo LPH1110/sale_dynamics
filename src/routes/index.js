@@ -37,5 +37,5 @@ export const publicRoutes = [
     { path: '/orders/detail/:orderId', protected: true, page: OrderDetail, layout: MainLayout },
     { path: '/orders/detail/:orderId/refund', protected: true, page: OrderRefund, layout: MainLayout },
     { path: '/customers/detail/:phone', protected: true, page: CustomerDetail, layout: MainLayout },
-    { path: '/customers', protected: true, page: Customers, layout: MainLayout },
+    { path: '/customers', protected: true, page: UnderDevelopment, layout: MainLayout },
 ];

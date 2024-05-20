@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { UserAuth } from '~/contexts/AuthContext/AuthProvider';
 import { CalendarIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
-import { DateRangePicker, NumOrders, Revenue, TopSellingProducts } from '~/components';
+import { format, isSameDay } from 'date-fns';
+import { useState } from 'react';
+import { DateRangePicker } from '~/components';
+import { NewCustomers, NumOrders, Revenue, TopSellingProducts } from '~/components/statistics';
+import { UserAuth } from '~/contexts/AuthContext/AuthProvider';
 import { DashboardContext } from '~/contexts/pool';
-import { format, isEqual, isSameDay } from 'date-fns';
 import { hasChangedPassword } from '~/utils';
 import NotAllowAccess from './NotAllowAccess';
 
@@ -91,6 +92,7 @@ const Dashboard = () => {
                         <section className="grid grid-cols-4 gap-4">
                             <Revenue />
                             <NumOrders />
+                            <NewCustomers />
                         </section>
                         <section className="grid grid-cols-12 gap-4">
                             <div className="col-span-5">
