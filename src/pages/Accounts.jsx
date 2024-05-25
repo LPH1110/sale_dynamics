@@ -99,9 +99,9 @@ const DataRow = ({ data }) => {
                 </NavLink>
             </td>
             <td className="text-sm p-3 hover:bg-gray-100">{data.fullName}</td>
-            <td className="text-sm p-3 hover:bg-gray-100">{data.email}</td>
-            <td className="text-sm p-3 hover:bg-gray-100">{data.enabled && 'yes'}</td>
-            <td className="text-sm p-3 hover:bg-gray-100">{authorizeAdmin(data) ? 'admin' : ''}</td>
+            <td className="text-sm p-3 hover:bg-gray-100">{data.email || '---'}</td>
+            <td className="text-sm p-3 hover:bg-gray-100">{data.enabled ? 'yes' : 'no'}</td>
+            <td className="text-sm p-3 hover:bg-gray-100">{authorizeAdmin(data) ? 'admin' : 'staff'}</td>
             <td className="text-sm p-3 hover:bg-gray-100">{data.phone}</td>
         </tr>
     );

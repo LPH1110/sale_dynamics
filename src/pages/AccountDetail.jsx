@@ -1,11 +1,11 @@
 import { format } from 'date-fns';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Modal, OrderStatus } from '~/components';
 import { Spinner } from '~/icons';
 import { userService } from '~/services';
-import { authorizeAdmin, formatArrayDate, hasChangedPassword, isSameUser, request } from '~/utils';
+import { authorizeAdmin, formatArrayDate, hasChangedPassword, request } from '~/utils';
 import NotAllowAccess from './NotAllowAccess';
 import { UserAuth } from '~/contexts/AuthContext/AuthProvider';
 import { ArrowUpTrayIcon, FolderOpenIcon, LockOpenIcon } from '@heroicons/react/24/outline';
@@ -57,6 +57,11 @@ const AccountDetail = () => {
         }
     };
 
+    const isSameUser = useCallback((left, right) => {
+        console.log(left?.username.localeCompare(right?.username) === 0);
+        return left?.username.localeCompare(right?.username) === 0;
+    }, []);
+
     const handleChangeAvatar = (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -82,7 +87,7 @@ const AccountDetail = () => {
                             <section>
                                 <label
                                     onClick={(e) => {
-                                        if (!isSameUser(user, account)) {
+                                        if (!!authorizeAdmin(user)) {
                                             e.preventDefault();
                                         }
                                     }}
@@ -100,7 +105,7 @@ const AccountDetail = () => {
                                                 <UserCircleIcon className="text-slate-300 m-auto block max-w-full max-h-full absolute inset-0" />
                                             )}
                                             {/* Overlay */}
-                                            {isSameUser(user, account) && (
+                                            {!authorizeAdmin(user) && (
                                                 <div className="rounded-full text-white flex items-center justify-center gap-2 w-full h-full bg-gray-700 absolute z-3 opacity-0 hover:opacity-100 hover:bg-gray-700/60 transition cursor-pointer">
                                                     <ArrowUpTrayIcon className="w-6 h-6" />
                                                 </div>
@@ -109,7 +114,7 @@ const AccountDetail = () => {
                                     </div>
                                 </label>
                                 <input
-                                    readOnly={isSameUser(user, account)}
+                                    readOnly={!authorizeAdmin(user)}
                                     type="file"
                                     className="hidden"
                                     name="user-avatar"
@@ -182,7 +187,7 @@ const AccountDetail = () => {
                                                         placeholder="---"
                                                         name="fullName"
                                                         id="fullName"
-                                                        readOnly={isSameUser(user, account)}
+                                                        readOnly={!authorizeAdmin(user)}
                                                     />
                                                 </div>
                                                 <div className="space-y-2 w-full">
@@ -193,7 +198,7 @@ const AccountDetail = () => {
                                                         name="phoneNumber"
                                                         id="phoneNumber"
                                                         value={form.phone}
-                                                        readOnly={isSameUser(user, account)}
+                                                        readOnly={!authorizeAdmin(user)}
                                                         onChange={(e) =>
                                                             setForm((prev) => ({ ...prev, phone: e.target.value }))
                                                         }
@@ -205,7 +210,7 @@ const AccountDetail = () => {
                                                         type="text"
                                                         placeholder="---"
                                                         value={form.email}
-                                                        readOnly={isSameUser(user, account)}
+                                                        readOnly={!authorizeAdmin(user)}
                                                         onChange={(e) =>
                                                             setForm((prev) => ({ ...prev, email: e.target.value }))
                                                         }
@@ -215,7 +220,7 @@ const AccountDetail = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        {user?.username.localeCompare(account?.username) === 0 && (
+                                        {authorizeAdmin(user) && (
                                             <div className="flex justify-end items-center gap-2 text-sm">
                                                 <button
                                                     type="submit"

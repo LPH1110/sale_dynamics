@@ -127,24 +127,6 @@ const Products = () => {
                         ) : (
                             ''
                         )}
-                        {authorizeAdmin(user) ? (
-                            <button
-                                type="button"
-                                r
-                                onClick={() => {
-                                    setModalAction('confirm-delete');
-                                    setOpenModal(true);
-                                }}
-                                className="flex gap-2 items-center justify-center px-3 py-2 text-sm rounded-sm hover:bg-gray-100"
-                            >
-                                <span className="w-5 h-5 text-gray-500">
-                                    <TrashIcon />
-                                </span>{' '}
-                                Delete
-                            </button>
-                        ) : (
-                            ''
-                        )}
                         <button
                             type="button"
                             className="flex gap-2 items-center justify-center px-3 py-2 text-sm rounded-sm hover:bg-gray-100"

@@ -44,12 +44,11 @@ const CreateAccountModal = ({ setAccounts, setOpen }) => {
                 const users = await userService.fetchAll();
                 setAccounts(users);
                 toast.success(`Create ${data.fullName} successfully!`);
+                setOpen(false);
             } catch (error) {
-                console.log(error);
-                toast.error("Can't create account");
+                toast.error(error.response.data.message);
             } finally {
                 setIsLoading(false);
-                setOpen(false);
             }
         },
     });

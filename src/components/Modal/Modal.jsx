@@ -14,6 +14,7 @@ import BlockAccountConfirmation from './BlockAccountConfirmation';
 import AccountBlockedNotification from './AccountBlockedNotification';
 import AccountUnblockConfirm from './AccountUnblockConfirm';
 import ChangeAvatar from './ChangeAvatar';
+import ProductDeletion from './ProductDeletion';
 
 function Modal({
     setCreateVariantForm,
@@ -46,6 +47,7 @@ function Modal({
         'account-blocked-notification': <AccountBlockedNotification setOpen={setOpen} />,
         'account-unblock-confirmation': <AccountUnblockConfirm setOpen={setOpen} />,
         'change-avatar': <ChangeAvatar setOpen={setOpen} />,
+        'delete-product': <ProductDeletion setOpen={setOpen} />,
     });
 
     const cancelButtonRef = useRef(null);

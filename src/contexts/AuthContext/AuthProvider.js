@@ -7,20 +7,14 @@ const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
 
     const signin = async (username, password) => {
-        try {
-            const res = await axios.post(`${process.env.REACT_APP_SERVER_BASE}/auth/login`, {
-                username: username,
-                password: password,
-            });
+        const res = await axios.post(`${process.env.REACT_APP_SERVER_BASE}/auth/login`, {
+            username: username,
+            password: password,
+        });
+        setUser(res.data.data.userDTO);
+        window.localStorage.setItem('jwt', res.data.data.jwt);
 
-            setUser(res.data.userDTO);
-            console.log(res.data.userDTO);
-            window.localStorage.setItem('jwt', res.data.jwt);
-
-            return res.data;
-        } catch (error) {
-            toast.error(error.response.data.message);
-        }
+        return res.data;
     };
 
     const signout = () => {

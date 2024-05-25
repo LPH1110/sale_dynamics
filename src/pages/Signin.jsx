@@ -29,19 +29,15 @@ const Signin = () => {
             try {
                 setIsLoading(true);
                 const res = await signin(data.username, data.password);
-
-                if (res?.userDTO) {
-                    if (res.userDTO.blocked) {
-                        setModal({ open: true, action: 'account-blocked-notification' });
-                    } else {
-                        toast.success('Login successfully!');
-                        navigate('/');
-                    }
+                console.log(res.data);
+                if (res.data.userDTO.blocked) {
+                    setModal({ open: true, action: 'account-blocked-notification' });
                 } else {
-                    toast.error('Credential is not found!');
+                    toast.success(res.message);
+                    navigate('/');
                 }
             } catch (error) {
-                console.log(error);
+                toast.error(error.response.data.message);
             } finally {
                 setIsLoading(false);
             }
