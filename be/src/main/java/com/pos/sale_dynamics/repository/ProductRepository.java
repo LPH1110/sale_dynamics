@@ -1,6 +1,8 @@
 package com.pos.sale_dynamics.repository;
 
 import com.pos.sale_dynamics.domain.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,6 +15,9 @@ public interface ProductRepository extends JpaRepository<Product,String> {
 
     @Query("SELECT p FROM Product p WHERE p.deletedAt IS NULL")
     List<Product> findExistingProducts();
+
+    @Query("SELECT p FROM Product p WHERE p.deletedAt IS NULL")
+    Page<Product> findExistingProducts(Pageable pageable);
 
     @Query("SELECT p FROM Product p WHERE p.deletedAt IS NULL AND p.name LIKE %:infix% OR p.barcode LIKE %:infix% OR p.sku LIKE %:infix% ORDER BY id LIMIT 50")
     List<Product> findByNameContaining(@Param("infix") String infix);

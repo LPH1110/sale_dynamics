@@ -6,6 +6,8 @@ import com.pos.sale_dynamics.dto.OrderDTO;
 import com.pos.sale_dynamics.requests.GetInRangeRequest;
 import com.pos.sale_dynamics.service.CustomerService.CustomerServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,11 @@ public class CustomerController {
     @GetMapping
     public List<Customer> getCustomers() {
         return customerService.findAll();
+    }
+
+    @GetMapping("/page")
+    public Page<CustomerDTO> getCustomersPage(Pageable pageable) {
+        return customerService.findAll(pageable);
     }
 
     @PostMapping("/create")

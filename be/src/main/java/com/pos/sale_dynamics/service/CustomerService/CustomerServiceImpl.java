@@ -10,6 +10,8 @@ import com.pos.sale_dynamics.repository.CustomerRepository;
 import com.pos.sale_dynamics.repository.OrderRepository;
 import org.apache.http.protocol.HTTP;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,11 @@ public class CustomerServiceImpl implements CustomerService{
     @Override
     public List<Customer> findAll() {
         return customerRepository.findAll();
+    }
+
+    @Override
+    public Page<CustomerDTO> findAll(Pageable pageable) {
+        return customerRepository.findAll(pageable).map(customer -> customerDTOMapper.apply(customer));
     }
 
     @Override

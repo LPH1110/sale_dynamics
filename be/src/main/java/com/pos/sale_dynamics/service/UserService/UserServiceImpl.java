@@ -12,6 +12,8 @@ import com.pos.sale_dynamics.responses.CreateUserResponse;
 import com.pos.sale_dynamics.service.CloudinaryService.CloudinaryServiceImpl;
 import org.apache.http.protocol.HTTP;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -80,6 +82,9 @@ public class UserServiceImpl implements UserDetailsService {
 
     public List<UserDTO> findAll() {
         return userRepository.findAll().stream().map(user -> userDTOMapper.apply(user)).toList();
+    }
+    public Page<UserDTO> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable).map(user -> userDTOMapper.apply(user));
     }
     public ResponseEntity<UserDTO> findByUsername(String username) {
         Optional<ApplicationUser> user = userRepository.findByUsername(username);

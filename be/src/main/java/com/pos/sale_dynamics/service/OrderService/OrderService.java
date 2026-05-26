@@ -4,6 +4,8 @@ import com.pos.sale_dynamics.domain.Order;
 import com.pos.sale_dynamics.dto.OrderDTO;
 import com.pos.sale_dynamics.dto.ProductDTO;
 import com.pos.sale_dynamics.responses.TopSellingProductResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -13,6 +15,7 @@ public interface OrderService {
     ResponseEntity<String> confirmOrder(String orderId);
 
     List<OrderDTO> findAll();
+    Page<OrderDTO> findAll(Pageable pageable);
 
     ResponseEntity<OrderDTO> findById(String orderId);
 

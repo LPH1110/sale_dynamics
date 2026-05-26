@@ -9,6 +9,8 @@ import com.pos.sale_dynamics.repository.*;
 import com.pos.sale_dynamics.responses.TopSellingProductResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -60,6 +62,11 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public List<OrderDTO> findAll() {
         return orderRepository.findAll().stream().map(order -> orderDTOMapper.apply(order)).toList();
+    }
+
+    @Override
+    public Page<OrderDTO> findAll(Pageable pageable) {
+        return orderRepository.findAll(pageable).map(order -> orderDTOMapper.apply(order));
     }
 
     @Override

@@ -41,19 +41,6 @@ services:
       - db
       - redis
 
-  frontend:
-    build:
-      context: ./fe
-      dockerfile: Containerfile
-      args:
-        - REACT_APP_SERVER_BASE=http://localhost:8080
-    container_name: sale-dynamics-fe
-    restart: unless-stopped
-    ports:
-      - "3000:80"
-    depends_on:
-      - backend
-
 volumes:
   db_data:
   redis_data:

@@ -15,14 +15,16 @@ import com.pos.sale_dynamics.responses.CldUploadResponse;
 import com.pos.sale_dynamics.responses.DisableProductResponse;
 import com.pos.sale_dynamics.service.CloudinaryService.CloudinaryServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-
-
+ 
+ 
 @Service
 public class ProductServiceImpl implements ProductService {
     @Autowired
@@ -124,6 +126,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductDTO> findAll() {
         return productRepository.findExistingProducts().stream().map(product -> productMapper.apply(product)).toList();
+    }
+
+    @Override
+    public Page<ProductDTO> findAll(Pageable pageable) {
+        return productRepository.findExistingProducts(pageable).map(product -> productMapper.apply(product));
     }
 
 

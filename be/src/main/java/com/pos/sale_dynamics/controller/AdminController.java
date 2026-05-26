@@ -6,6 +6,8 @@ import com.pos.sale_dynamics.dto.UserDTO;
 import com.pos.sale_dynamics.responses.CreateUserResponse;
 import com.pos.sale_dynamics.service.UserService.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +24,11 @@ public class AdminController {
     @GetMapping("/users")
     public List<UserDTO> getUsers() {
         return userService.findAll();
+    }
+
+    @GetMapping("/users/page")
+    public Page<UserDTO> getUsersPage(Pageable pageable) {
+        return userService.findAll(pageable);
     }
 
     @PostMapping("/create")

@@ -7,6 +7,8 @@ import com.pos.sale_dynamics.requests.PayOrderRequest;
 import com.pos.sale_dynamics.responses.TopSellingProductResponse;
 import com.pos.sale_dynamics.service.OrderService.OrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +24,11 @@ public class OrderController {
     @GetMapping
     public List<OrderDTO> getOrders() {
         return orderService.findAll();
+    }
+
+    @GetMapping("/page")
+    public Page<OrderDTO> getOrdersPage(Pageable pageable) {
+        return orderService.findAll(pageable);
     }
 
     @PostMapping("/create")
