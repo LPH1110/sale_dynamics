@@ -1,0 +1,59 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: sale-dynamics-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: sale_dynamics
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  redis:
+    image: redis:alpine
+    container_name: sale-dynamics-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  backend:
+    build:
+      context: ./be
+      dockerfile: Containerfile
+    container_name: sale-dynamics-be
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - MYSQL_HOST_URL=jdbc:mysql://db:3306/sale_dynamics?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - MYSQL_USERNAME=user
+      - MYSQL_PASSWORD=password
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
+    env_file: ./be/.env
+    depends_on:
+      - db
+      - redis
+
+  frontend:
+    build:
+      context: ./fe
+      dockerfile: Containerfile
+      args:
+        - REACT_APP_SERVER_BASE=http://localhost:8080
+    container_name: sale-dynamics-fe
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  db_data:
+  redis_data:

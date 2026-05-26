@@ -1,0 +1,15 @@
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci || npm install
+ARG REACT_APP_SERVER_BASE
+ENV REACT_APP_SERVER_BASE=$REACT_APP_SERVER_BASE
+COPY . .
+RUN npm run build
+
+FROM nginx:alpine
+COPY --from=builder /app/build /usr/share/nginx/html
+# If using React Router, uncomment below line and provide an nginx.conf to handle client-side routing.
+# For simplicity, standard nginx serving static files is used here.
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

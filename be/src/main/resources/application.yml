@@ -1,0 +1,26 @@
+## Redis server properties
+#spring.redis.host=localhost
+#spring.redis.port=6379
+
+spring:
+  main:
+    allow-circular-references: true
+  application:
+    name: sale_dynamics
+  datasource:
+    url: ${MYSQL_HOST_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+  servlet:
+    multipart:
+      enabled: true
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
+      show-sql: true
