@@ -68,6 +68,8 @@ public class AuthenticationService {
         Optional<ApplicationUser> userRecord = userRepository.findByUsername(username);
         if (userRecord.isEmpty()) {
             return new ResponseEntity<>(new LoginResponse(true, "Username doesn't exist", null), HttpStatus.NOT_FOUND);
+        } else if (!userRecord.get().getEnabled()) {
+            return new ResponseEntity<>(new LoginResponse(true, "Please login by clicking on the link in your email", null), HttpStatus.FORBIDDEN);
         } else if (!passwordEncoder.matches(password, userRecord.get().getPassword())) {
             return new ResponseEntity<>(new LoginResponse(true, "Wrong password", null), HttpStatus.NOT_ACCEPTABLE);
         } else {

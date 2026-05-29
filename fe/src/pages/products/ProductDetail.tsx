@@ -48,6 +48,9 @@ export const ProductDetail: React.FC = () => {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<{ current: number, total: number, percent: number } | null>(null);
+  const [imageToDelete, setImageToDelete] = useState<number | null>(null);
+  const [isDeletingImage, setIsDeletingImage] = useState(false);
 
   const [properties, setProperties] = useState<{ name: string; tags: string[] }[]>([]);
   const [newTagVal, setNewTagVal] = useState<Record<number, string>>({});
@@ -178,15 +181,26 @@ export const ProductDetail: React.FC = () => {
                   <PhotoIcon className="w-12 h-12 text-neutral-300" />
                 )}
                 {isAdmin && (
-                  <label className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white">
+                  <label className={`absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity ${uploadProgress ? 'cursor-not-allowed' : 'cursor-pointer'} text-white`}>
                     <ArrowUpTrayIcon className="w-6 h-6 mb-1" />
                     <span className="text-xs font-semibold">Change Hero</span>
                     <input type="file" className="hidden" onChange={async (e) => {
                         if(e.target.files?.[0]) {
-                          const t = await productService.saveThumbnail(product.barcode, e.target.files[0]);
-                          setThumbnails(prev => [t, ...prev]); // Put new image at the front as hero
+                          try {
+                            const t = await productService.saveThumbnail(product.barcode, e.target.files[0], (progressEvent) => {
+                              if (progressEvent.total) {
+                                const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                                setUploadProgress({ current: 1, total: 1, percent });
+                              }
+                            });
+                            setThumbnails(prev => [t, ...prev]); // Put new image at the front as hero
+                          } catch (err) {
+                            console.error(err);
+                          } finally {
+                            setUploadProgress(null);
+                          }
                         }
-                    }} />
+                    }} disabled={!!uploadProgress} />
                   </label>
                 )}
             </Card>
@@ -352,10 +366,7 @@ export const ProductDetail: React.FC = () => {
                       {isAdmin && (
                         <button 
                           type="button"
-                          onClick={async () => {
-                            await productService.deleteThumbnail(product.barcode, t.id);
-                            setThumbnails(prev => prev.filter(item => item.id !== t.id));
-                          }}
+                          onClick={() => setImageToDelete(t.id)}
                           className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-md hover:bg-red-600"
                         >
                           <XMarkIcon className="w-3.5 h-3.5" />
@@ -364,7 +375,7 @@ export const ProductDetail: React.FC = () => {
                   </div>
                 ))}
                 {isAdmin && (
-                  <label className="aspect-square rounded-lg border-2 border-dashed border-neutral-300 dark:border-neutral-700 flex flex-col items-center justify-center cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors group">
+                  <label className={`aspect-square rounded-lg border-2 border-dashed border-neutral-300 dark:border-neutral-700 flex flex-col items-center justify-center ${uploadProgress ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-900'} transition-colors group`}>
                       <div className="p-3 bg-neutral-100 dark:bg-neutral-800 rounded-full group-hover:bg-brand-50 dark:group-hover:bg-brand-900/30 transition-colors mb-2">
                         <PlusIcon className="w-6 h-6 text-neutral-400 group-hover:text-brand-500" />
                       </div>
@@ -372,13 +383,25 @@ export const ProductDetail: React.FC = () => {
                       <input type="file" multiple className="hidden" onChange={async (e) => {
                           if(e.target.files) {
                             const filesArr = Array.from(e.target.files);
-                            // Upload từng ảnh và cập nhật state (Có thể optimize bằng Promise.all)
-                            for(const file of filesArr) {
-                               const t = await productService.saveThumbnail(product.barcode, file);
-                               setThumbnails(prev => [...prev, t]);
+                            const total = filesArr.length;
+                            try {
+                              for(let i = 0; i < total; i++) {
+                                 const file = filesArr[i];
+                                 const t = await productService.saveThumbnail(product.barcode, file, (progressEvent) => {
+                                   if (progressEvent.total) {
+                                     const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                                     setUploadProgress({ current: i + 1, total, percent });
+                                   }
+                                 });
+                                 setThumbnails(prev => [...prev, t]);
+                              }
+                            } catch(err) {
+                              console.error(err);
+                            } finally {
+                              setUploadProgress(null);
                             }
                           }
-                      }} />
+                      }} disabled={!!uploadProgress} />
                   </label>
                 )}
               </div>
@@ -387,6 +410,24 @@ export const ProductDetail: React.FC = () => {
           </div>
         </form>
       </div>
+
+      {/* Upload Progress Overlay */}
+      {uploadProgress && (
+        <div className="fixed bottom-4 right-4 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-lg rounded-lg p-4 z-50 min-w-[250px] animate-slide-up">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-semibold text-neutral-700 dark:text-neutral-200">
+              Uploading {uploadProgress.total > 1 ? `(${uploadProgress.current}/${uploadProgress.total})` : ''}
+            </span>
+            <span className="text-xs font-bold text-brand-600">{uploadProgress.percent}%</span>
+          </div>
+          <div className="w-full bg-neutral-100 dark:bg-neutral-800 rounded-full h-2 overflow-hidden">
+            <div 
+              className="bg-brand-500 h-2 rounded-full transition-all duration-300"
+              style={{ width: `${uploadProgress.percent}%` }}
+            ></div>
+          </div>
+        </div>
+      )}
 
       {/* Disable Confirmation Modal */}
       <Dialog isOpen={isDeleteOpen} onClose={() => { setIsDeleteOpen(false); setDeleteError(null); }} title="Disable Product" size="sm">
@@ -414,6 +455,32 @@ export const ProductDetail: React.FC = () => {
                 }
                 finally { setIsDeleting(false); }
               }}>Confirm Disable</Button>
+           </div>
+        </div>
+      </Dialog>
+
+      {/* Delete Image Confirmation Modal */}
+      <Dialog isOpen={imageToDelete !== null} onClose={() => setImageToDelete(null)} title="Remove Image" size="sm">
+        <div className="space-y-4">
+           <p className="text-sm text-neutral-500">
+            Are you sure you want to remove this image? This action cannot be undone and will permanently delete the image from the cloud.
+           </p>
+           <div className="flex justify-end gap-3">
+              <Button variant="outline" onClick={() => setImageToDelete(null)}>Cancel</Button>
+              <Button variant="destructive" isLoading={isDeletingImage} onClick={async () => {
+                if (imageToDelete === null) return;
+                setIsDeletingImage(true);
+                try {
+                  await productService.deleteThumbnail(product.barcode, imageToDelete);
+                  setThumbnails(prev => prev.filter(item => item.id !== imageToDelete));
+                  setImageToDelete(null);
+                } catch(e) { 
+                  console.error(e);
+                  alert("Failed to delete image.");
+                } finally { 
+                  setIsDeletingImage(false); 
+                }
+              }}>Confirm Remove</Button>
            </div>
         </div>
       </Dialog>

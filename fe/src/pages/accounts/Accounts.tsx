@@ -44,6 +44,7 @@ export const Accounts: React.FC = () => {
   const [newPhone, setNewPhone] = useState('');
   const [newRole, setNewRole] = useState<'STAFF' | 'ADMIN'>('STAFF');
   const [isCreating, setIsCreating] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
 
   // Bulk actions status
   const [isActionLoading, setIsActionLoading] = useState(false);
@@ -152,6 +153,7 @@ export const Accounts: React.FC = () => {
     e.preventDefault();
     if (!newUsername || !newFullName || !newEmail) return;
     setIsCreating(true);
+    setCreateError(null);
     try {
       await adminService.createUser({
         username: newUsername,
@@ -167,9 +169,10 @@ export const Accounts: React.FC = () => {
       setNewPhone('');
       setNewRole('STAFF');
       fetchUsers();
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert('Failed to create account. Username or email might already exist.');
+      const msg = err.response?.data?.message || err.response?.data || err.message || 'Failed to create account. Username or email might already exist.';
+      setCreateError(typeof msg === 'string' ? msg : JSON.stringify(msg));
     } finally {
       setIsCreating(false);
     }
@@ -385,11 +388,16 @@ export const Accounts: React.FC = () => {
       {/* Create Account Modal */}
       <Dialog
         isOpen={createOpen}
-        onClose={() => setCreateOpen(false)}
+        onClose={() => { setCreateOpen(false); setCreateError(null); }}
         title="Add Staff Member"
         size="md"
       >
         <form onSubmit={handleCreateAccount} className="flex flex-col gap-4">
+          {createError && (
+             <div className="p-3 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 text-sm rounded-md border border-red-200 dark:border-red-900/50">
+               {createError}
+             </div>
+          )}
           <Input
             label="Username"
             required

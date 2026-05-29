@@ -23,6 +23,7 @@ export const AccountDetail: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
   const [avatarLoading, setAvatarLoading] = useState(false);
+  const [updateMessage, setUpdateMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
   // Forms values
   const [fullName, setFullName] = useState('');
@@ -58,6 +59,7 @@ export const AccountDetail: React.FC = () => {
     e.preventDefault();
     if (!account) return;
     setSaveLoading(true);
+    setUpdateMessage(null);
     try {
       const res = await userService.updateInfo(account.username, {
         fullName,
@@ -65,10 +67,11 @@ export const AccountDetail: React.FC = () => {
         email,
       });
       setAccount(res);
-      alert('Profile details updated successfully!');
-    } catch (err) {
+      setUpdateMessage({ type: 'success', text: 'Profile details updated successfully!' });
+    } catch (err: any) {
       console.error(err);
-      alert('Failed to update details.');
+      const msg = err.response?.data?.message || err.response?.data || err.message || 'Failed to update details.';
+      setUpdateMessage({ type: 'error', text: typeof msg === 'string' ? msg : JSON.stringify(msg) });
     } finally {
       setSaveLoading(false);
     }
@@ -77,6 +80,7 @@ export const AccountDetail: React.FC = () => {
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0] && account) {
       setAvatarLoading(true);
+      setUpdateMessage(null);
       try {
         const file = e.target.files[0];
         const res = await userService.changeAvatar(file, account.username);
@@ -84,10 +88,11 @@ export const AccountDetail: React.FC = () => {
         if (isSelf && currentUser) {
           updateUser({ ...currentUser, avatarURL: res.url });
         }
-        alert('Avatar uploaded successfully!');
-      } catch (err) {
+        setUpdateMessage({ type: 'success', text: 'Avatar uploaded successfully!' });
+      } catch (err: any) {
         console.error(err);
-        alert('Failed to upload avatar image.');
+        const msg = err.response?.data?.message || err.response?.data || err.message || 'Failed to upload avatar image.';
+        setUpdateMessage({ type: 'error', text: typeof msg === 'string' ? msg : JSON.stringify(msg) });
       } finally {
         setAvatarLoading(false);
       }
@@ -248,6 +253,11 @@ export const AccountDetail: React.FC = () => {
                 </div>
 
                 <form id="profile-update-form" onSubmit={handleSaveChanges} className="space-y-4">
+                  {updateMessage && (
+                    <div className={`p-3 text-sm rounded-md border ${updateMessage.type === 'success' ? 'bg-green-50 text-green-700 border-green-200 dark:bg-green-950/30 dark:text-green-400 dark:border-green-900/50' : 'bg-red-50 text-red-600 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-900/50'}`}>
+                      {updateMessage.text}
+                    </div>
+                  )}
                   <Input
                     label="Full Name"
                     value={fullName}

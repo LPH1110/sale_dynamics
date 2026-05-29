@@ -10,8 +10,10 @@ import com.pos.sale_dynamics.repository.*;
 import com.pos.sale_dynamics.responses.CldUploadResponse;
 import com.pos.sale_dynamics.responses.CreateUserResponse;
 import com.pos.sale_dynamics.service.CloudinaryService.CloudinaryServiceImpl;
+import com.pos.sale_dynamics.service.EmailService;
 import org.apache.http.protocol.HTTP;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -58,6 +60,12 @@ public class UserServiceImpl implements UserDetailsService {
     @Autowired
     private CloudinaryServiceImpl cloudinaryService;
 
+    @Autowired
+    private EmailService emailService;
+
+    @Value("${app.frontend.url:http://localhost:5173}")
+    private String frontendUrl;
+
     public List<OrderDTO> findOrdersByUsername(String username) {
         Optional<ApplicationUser> user = userRepository.findByUsername(username);
         return user.map(applicationUser -> applicationUser.getOrders().stream().map(order -> orderDTOMapper.apply(order)).toList()).orElse(null);
@@ -103,7 +111,7 @@ public class UserServiceImpl implements UserDetailsService {
          }
 
         // Encode password
-        String encodedPassword = passwordEncoder.encode(password.isEmpty() ? "123" : password);
+        String encodedPassword = passwordEncoder.encode(password == null || password.isEmpty() ? "123" : password);
         String username = email.split("@")[0];
         // Add role
         Role userRole = roleRepository.findByAuthority("USER").get();
@@ -118,6 +126,20 @@ public class UserServiceImpl implements UserDetailsService {
         VerificationToken verifyToken = generateToken(savedUser);
 
         verificationTokenRepository.save(verifyToken);
+
+        // Send email
+        String link = frontendUrl + "/verify-account/" + verifyToken.getToken();
+        String subject = "Your Sale Dynamics Account is Ready";
+        String text = "Hello " + fullName + ",\n\n" +
+                "An account has been created for you. Please click the link below to verify your account and log in for the first time.\n" +
+                "This link will expire in 1 minute.\n\n" +
+                link + "\n\n" +
+                "Thank you.";
+        try {
+            emailService.sendEmail(email, subject, text);
+        } catch (Exception e) {
+            System.err.println("Failed to send email: " + e.getMessage());
+        }
 
         return new ResponseEntity<>(new CreateUserResponse(false, "Account created successfully", verifyToken), HttpStatus.CREATED);
     }
@@ -139,6 +161,21 @@ public class UserServiceImpl implements UserDetailsService {
 
         verificationTokenRepository.save(verifyToken);
         System.out.println(verifyToken.getToken());
+
+        // Send email
+        String link = frontendUrl + "/verify-account/" + verifyToken.getToken();
+        String subject = "New Verification Link - Sale Dynamics";
+        String text = "Hello " + user.getFullName() + ",\n\n" +
+                "A new verification link has been generated for you. Please click the link below to verify your account and log in.\n" +
+                "This link will expire in 1 minute.\n\n" +
+                link + "\n\n" +
+                "Thank you.";
+        try {
+            emailService.sendEmail(user.getEmail(), subject, text);
+        } catch (Exception e) {
+            System.err.println("Failed to send email: " + e.getMessage());
+        }
+
         return verifyToken.getToken();
     }
 

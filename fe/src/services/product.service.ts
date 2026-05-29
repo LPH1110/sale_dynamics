@@ -35,7 +35,7 @@ export const disable = async (barcode: string): Promise<DisableProductResponse> 
   return get<DisableProductResponse>(`products/disable?barcode=${encodeURIComponent(barcode)}`);
 };
 
-export const saveThumbnail = async (barcode: string, file: File): Promise<Thumbnail> => {
+export const saveThumbnail = async (barcode: string, file: File, onUploadProgress?: (progressEvent: any) => void): Promise<Thumbnail> => {
   const formData = new FormData();
   formData.append('barcode', barcode);
   formData.append('thumbnail', file);
@@ -43,6 +43,7 @@ export const saveThumbnail = async (barcode: string, file: File): Promise<Thumbn
     headers: {
       'Content-Type': 'multipart/form-data',
     },
+    onUploadProgress,
   });
 };
 
