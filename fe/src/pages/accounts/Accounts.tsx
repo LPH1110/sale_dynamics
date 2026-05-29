@@ -1,4 +1,4 @@
-import { Badge, Button, DataTableSection, Dialog, Input } from '@/components/ui';
+import { Avatar, Badge, Button, DataTableSection, Dialog, Input } from '@/components/ui';
 import { Column } from '@/components/ui/Table';
 import * as adminService from '@/services/admin.service';
 import { actions, useStore } from '@/store';
@@ -218,7 +218,12 @@ export const Accounts: React.FC = () => {
     {
       header: 'Full Name',
       className: 'font-medium text-neutral-900 dark:text-neutral-55',
-      render: (acc) => acc.fullName,
+      render: (acc) => (
+        <div className="flex items-center gap-3">
+          <Avatar src={acc.avatarURL} name={acc.fullName || acc.username} size="sm" />
+          <span>{acc.fullName}</span>
+        </div>
+      ),
     },
     {
       header: 'Email Address',

@@ -1,18 +1,12 @@
-import { Badge, Button, Card, Input, Spinner } from '@/components/ui';
+import { Badge, Button, Card, Input, Spinner, Dialog } from '@/components/ui';
 import { useAuth } from '@/contexts/AuthContext';
 import * as adminService from '@/services/admin.service';
 import * as userService from '@/services/user.service';
 import { UserDTO } from '@/types/user.types';
-import {
-  ArrowUpTrayIcon,
-  CheckIcon,
-  ChevronRightIcon,
-  LockOpenIcon,
-  ShoppingBagIcon,
-  UserIcon,
-  IdentificationIcon
-} from '@heroicons/react/24/outline';
-import React, { useEffect, useState } from 'react';
+import { ArrowUpTrayIcon, CheckIcon, ChevronRightIcon, EnvelopeIcon, IdentificationIcon, KeyIcon, LockOpenIcon, NoSymbolIcon, ShoppingBagIcon, UserIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
+import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react';
+import clsx from 'clsx';
+import React, { Fragment, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 export const AccountDetail: React.FC = () => {
@@ -29,6 +23,15 @@ export const AccountDetail: React.FC = () => {
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
+
+  // Modals & Action States
+  const [passwordOpen, setPasswordOpen] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+
+  const [suspendOpen, setSuspendOpen] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
 
   const isAdmin = currentUser?.authorities?.some(r => r.authority === 'ADMIN');
   const isSelf = currentUser?.username === username;
@@ -54,6 +57,14 @@ export const AccountDetail: React.FC = () => {
   useEffect(() => {
     loadAccount();
   }, [username]);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (resendCooldown > 0) {
+      timer = setTimeout(() => setResendCooldown(resendCooldown - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [resendCooldown]);
 
   const handleSaveChanges = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,8 +118,53 @@ export const AccountDetail: React.FC = () => {
       await loadAccount();
     } catch (err) {
       console.error(err);
-    } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleBlockConfirm = async () => {
+    if (!account) return;
+    setIsLoading(true);
+    try {
+      await adminService.blockUser(account.username);
+      setSuspendOpen(false);
+      await loadAccount();
+    } catch (err) {
+      console.error(err);
+      setIsLoading(false);
+    }
+  };
+
+  const handleChangePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!account || !newPassword) return;
+    setPasswordLoading(true);
+    setPasswordError(null);
+    try {
+      await userService.changePassword(account.username, newPassword);
+      setPasswordOpen(false);
+      setNewPassword('');
+      setUpdateMessage({ type: 'success', text: 'Password changed successfully!' });
+    } catch (err: any) {
+      console.error(err);
+      const msg = err.response?.data?.message || err.response?.data || err.message || 'Failed to change password.';
+      setPasswordError(typeof msg === 'string' ? msg : JSON.stringify(msg));
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
+
+  const handleResendEmail = async () => {
+    if (!account || resendCooldown > 0) return;
+    setUpdateMessage(null);
+    try {
+      await adminService.generateVerifyToken(account.username);
+      setUpdateMessage({ type: 'success', text: 'Login email sent successfully.' });
+      setResendCooldown(60);
+    } catch (err: any) {
+      console.error(err);
+      const msg = err.response?.data?.message || err.response?.data || err.message || 'Failed to resend email.';
+      setUpdateMessage({ type: 'error', text: typeof msg === 'string' ? msg : JSON.stringify(msg) });
     }
   };
 
@@ -186,11 +242,88 @@ export const AccountDetail: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          {isAdmin && account.blocked && (
-            <Button onClick={handleUnblock} variant="outline" className="text-green-600 border-green-200 hover:bg-green-50 dark:border-green-900/50 dark:hover:bg-green-950/30">
-              <LockOpenIcon className="w-4 h-4 mr-1.5" /> Lift Suspend
-            </Button>
+        <div className="flex flex-wrap items-center gap-3">
+          {canEdit && (
+            <Menu as="div" className="relative inline-block text-left">
+              <MenuButton as={Button} variant="outline" className="flex items-center gap-1.5">
+                Actions <ChevronDownIcon className="w-4 h-4" />
+              </MenuButton>
+              <Transition
+                as={Fragment}
+                enter="transition ease-out duration-100"
+                enterFrom="transform opacity-0 scale-95"
+                enterTo="transform opacity-100 scale-100"
+                leave="transition ease-in duration-75"
+                leaveFrom="transform opacity-100 scale-100"
+                leaveTo="transform opacity-0 scale-95"
+              >
+                <MenuItems className="absolute right-0 mt-2 w-56 origin-top-right rounded-md bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                  {isAdmin && account.username !== currentUser?.username && (
+                    <MenuItem>
+                      {({ focus }) => (
+                        <button
+                          onClick={handleResendEmail}
+                          disabled={resendCooldown > 0}
+                          className={clsx(
+                            focus ? 'bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-50' : 'text-neutral-700 dark:text-neutral-300',
+                            'w-full flex items-center gap-2 px-4 py-2 text-sm disabled:opacity-50'
+                          )}
+                        >
+                          <EnvelopeIcon className="w-4 h-4" />
+                          {resendCooldown > 0 ? `Resend Email (${resendCooldown}s)` : 'Resend Email'}
+                        </button>
+                      )}
+                    </MenuItem>
+                  )}
+                  {isAdmin && account.blocked && (
+                    <MenuItem>
+                      {({ focus }) => (
+                        <button
+                          onClick={handleUnblock}
+                          className={clsx(
+                            focus ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'text-green-600 dark:text-green-500',
+                            'w-full flex items-center gap-2 px-4 py-2 text-sm'
+                          )}
+                        >
+                          <LockOpenIcon className="w-4 h-4" /> Lift Suspend
+                        </button>
+                      )}
+                    </MenuItem>
+                  )}
+                  {isAdmin && !account.blocked && account.username !== currentUser?.username && (
+                    <MenuItem>
+                      {({ focus }) => (
+                        <button
+                          onClick={() => setSuspendOpen(true)}
+                          className={clsx(
+                            focus ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400' : 'text-red-600 dark:text-red-500',
+                            'w-full flex items-center gap-2 px-4 py-2 text-sm'
+                          )}
+                        >
+                          <NoSymbolIcon className="w-4 h-4" /> Suspend Account
+                        </button>
+                      )}
+                    </MenuItem>
+                  )}
+                  {isAdmin && account.username !== currentUser?.username && (
+                    <div className="my-1 border-t border-neutral-200 dark:border-neutral-800" />
+                  )}
+                  <MenuItem>
+                    {({ focus }) => (
+                      <button
+                        onClick={() => setPasswordOpen(true)}
+                        className={clsx(
+                          focus ? 'bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-50' : 'text-neutral-700 dark:text-neutral-300',
+                          'w-full flex items-center gap-2 px-4 py-2 text-sm'
+                        )}
+                      >
+                        <KeyIcon className="w-4 h-4" /> Change Password
+                      </button>
+                    )}
+                  </MenuItem>
+                </MenuItems>
+              </Transition>
+            </Menu>
           )}
           {canEdit && (
             <Button type="submit" form="profile-update-form" isLoading={saveLoading}>
@@ -328,6 +461,78 @@ export const AccountDetail: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Change Password Dialog */}
+      <Dialog
+        isOpen={passwordOpen}
+        onClose={() => { setPasswordOpen(false); setPasswordError(null); setNewPassword(''); }}
+        title="Change Password"
+        size="sm"
+      >
+        <form onSubmit={handleChangePasswordSubmit} className="flex flex-col gap-4">
+          {passwordError && (
+            <div className="p-3 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 text-sm rounded-md border border-red-200 dark:border-red-900/50">
+              {passwordError}
+            </div>
+          )}
+          <p className="text-sm text-neutral-600 dark:text-neutral-400">
+            Please enter the new password for <span className="font-semibold text-neutral-900 dark:text-neutral-100">{account.username}</span>.
+          </p>
+          <Input
+            label="New Password"
+            type="password"
+            required
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            placeholder="••••••••"
+          />
+          <div className="flex gap-2 justify-end mt-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setPasswordOpen(false)}
+              disabled={passwordLoading}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" isLoading={passwordLoading}>
+              Change Password
+            </Button>
+          </div>
+        </form>
+      </Dialog>
+
+      {/* Suspend Confirmation Dialog */}
+      <Dialog
+        isOpen={suspendOpen}
+        onClose={() => setSuspendOpen(false)}
+        title="Suspend Account"
+        size="sm"
+      >
+        <div className="flex flex-col gap-4">
+          <p className="text-sm text-neutral-600 dark:text-neutral-300">
+            Are you sure you want to suspend <span className="font-semibold text-neutral-900 dark:text-neutral-100">{account.username}</span>? They will be immediately locked out of the sales POS interface.
+          </p>
+          <div className="flex gap-2 justify-end mt-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setSuspendOpen(false)}
+              disabled={isLoading}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleBlockConfirm}
+              isLoading={isLoading}
+            >
+              Suspend Account
+            </Button>
+          </div>
+        </div>
+      </Dialog>
+
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { hasChangedPassword } from '@/utils/hasChangedPassword';
 import NotAllowAccess from '@/components/NotAllowAccess';
+import SuspendedAccess from '@/components/SuspendedAccess';
 import Spinner from '@/components/ui/Spinner';
 
 interface ProtectedRouteProps {
@@ -23,6 +24,10 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   if (!user) {
     return <Navigate to="/sign-in" state={{ from: location }} replace />;
+  }
+
+  if (user.blocked) {
+    return <SuspendedAccess />;
   }
 
   // If password not changed and not already on the change-password route

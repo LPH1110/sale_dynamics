@@ -114,7 +114,7 @@ export const MainLayout: React.FC = () => {
                 <MenuItem>
                   {({ focus }) => (
                     <button
-                      onClick={() => navigate('/profile')}
+                      onClick={() => navigate(`/accounts/detail/${user?.username}`)}
                       className={clsx(
                         'w-full flex items-center gap-2 px-4 py-2 text-sm text-left text-neutral-700 dark:text-neutral-300',
                         focus && 'bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-50'
