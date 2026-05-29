@@ -47,6 +47,7 @@ export const ProductDetail: React.FC = () => {
   const [isUpdateLoading, setIsUpdateLoading] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const [properties, setProperties] = useState<{ name: string; tags: string[] }[]>([]);
   const [newTagVal, setNewTagVal] = useState<Record<number, string>>({});
@@ -147,7 +148,7 @@ export const ProductDetail: React.FC = () => {
               type="button"
               variant="outline" 
               className="text-red-500 border-red-200 hover:bg-red-50 dark:border-red-900/50 dark:hover:bg-red-950/30"
-              onClick={() => setIsDeleteOpen(true)}
+              onClick={() => { setIsDeleteOpen(true); setDeleteError(null); }}
             >
               <TrashIcon className="w-4 h-4 mr-1.5" /> Disable
             </Button>
@@ -388,19 +389,29 @@ export const ProductDetail: React.FC = () => {
       </div>
 
       {/* Disable Confirmation Modal */}
-      <Dialog isOpen={isDeleteOpen} onClose={() => setIsDeleteOpen(false)} title="Disable Product" size="sm">
+      <Dialog isOpen={isDeleteOpen} onClose={() => { setIsDeleteOpen(false); setDeleteError(null); }} title="Disable Product" size="sm">
         <div className="space-y-4">
            <p className="text-sm text-neutral-500">
             Are you sure you want to disable <strong>{product.name}</strong>? It will no longer appear in POS searches.
            </p>
+           {deleteError && (
+             <div className="p-3 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 text-sm rounded-md border border-red-200 dark:border-red-900/50">
+               {deleteError}
+             </div>
+           )}
            <div className="flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setIsDeleteOpen(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => { setIsDeleteOpen(false); setDeleteError(null); }}>Cancel</Button>
               <Button variant="destructive" isLoading={isDeleting} onClick={async () => {
                 setIsDeleting(true);
+                setDeleteError(null);
                 try {
                   await productService.disable(product.barcode);
                   navigate('/products');
-                } catch(e) { console.error(e); }
+                } catch(e: any) { 
+                  console.error(e);
+                  const msg = e.response?.data?.message || e.response?.data || e.message || 'An error occurred while disabling the product.';
+                  setDeleteError(typeof msg === 'string' ? msg : JSON.stringify(msg));
+                }
                 finally { setIsDeleting(false); }
               }}>Confirm Disable</Button>
            </div>
