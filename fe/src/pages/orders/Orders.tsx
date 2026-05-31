@@ -148,7 +148,7 @@ export const Orders: React.FC = () => {
     },
     {
       header: 'Customer Name',
-      className: 'font-medium text-neutral-900 dark:text-neutral-55',
+      className: 'font-medium text-neutral-900 dark:text-neutral-200',
       render: (order) => order.customer
         ? `${order.customer.firstname} ${order.customer.lastname}`
         : 'Walk-in Customer',
@@ -234,7 +234,7 @@ export const Orders: React.FC = () => {
                   setStatusFilter(e.target.value);
                   setCurrentPage(0);
                 }}
-                className="mt-1 w-full px-3 py-2 text-sm rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-950 dark:text-neutral-55 focus:outline-hidden focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
+                className="mt-1 w-full px-3 py-2 text-sm rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-950 dark:text-neutral-200 focus:outline-hidden focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
               >
                 <option value="">All</option>
                 <option value="PAID">PAID</option>
@@ -253,7 +253,7 @@ export const Orders: React.FC = () => {
                   setCreatedFromFilter(e.target.value);
                   setCurrentPage(0);
                 }}
-                className="mt-1 w-full px-3 py-2 text-sm rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-950 dark:text-neutral-55 focus:outline-hidden focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
+                className="mt-1 w-full px-3 py-2 text-sm rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-950 dark:text-neutral-200 focus:outline-hidden focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
               />
             </div>
             <div>
@@ -265,7 +265,7 @@ export const Orders: React.FC = () => {
                   setCreatedToFilter(e.target.value);
                   setCurrentPage(0);
                 }}
-                className="mt-1 w-full px-3 py-2 text-sm rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-950 dark:text-neutral-55 focus:outline-hidden focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
+                className="mt-1 w-full px-3 py-2 text-sm rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-950 dark:text-neutral-200 focus:outline-hidden focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
               />
             </div>
             <div className="flex items-end">

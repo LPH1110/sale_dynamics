@@ -352,9 +352,9 @@ export const OrderDetail: React.FC = () => {
                         <div className="font-semibold text-neutral-900 dark:text-neutral-50">
                           {order.customer.firstname} {order.customer.lastname}
                         </div>
-                        <div className="text-xs text-brand-600 dark:text-brand-400 hover:underline cursor-pointer">
+                        <Link to={`/customers/detail/${order.customer.phone}`} className="text-xs text-brand-600 dark:text-brand-400 hover:underline cursor-pointer">
                           View Profile
-                        </div>
+                        </Link>
                       </div>
                     </div>
 

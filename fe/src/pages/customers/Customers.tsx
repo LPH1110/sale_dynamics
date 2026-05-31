@@ -148,7 +148,7 @@ export const Customers: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-55">
+          <h1 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-200">
             Customer Directory
           </h1>
           <p className="text-sm text-neutral-500 dark:text-neutral-400">
@@ -185,7 +185,7 @@ export const Customers: React.FC = () => {
                   setCurrentPage(0);
                 }}
                 placeholder="e.g. 09"
-                className="mt-1 w-full px-3 py-2 text-sm rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-950 dark:text-neutral-55 focus:outline-hidden focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
+                className="mt-1 w-full px-3 py-2 text-sm rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-950 dark:text-neutral-200 focus:outline-hidden focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
               />
             </div>
             <div className="flex items-end">

@@ -171,7 +171,7 @@ export const Dashboard: React.FC = () => {
       {/* Title & Filter Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
+          <h1 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">
             Analytics Overview
           </h1>
           <p className="text-sm text-neutral-500 dark:text-neutral-400">
@@ -191,7 +191,12 @@ export const Dashboard: React.FC = () => {
           </Button>
 
           {showDatePicker && (
-            <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg shadow-popover p-4 z-10 flex flex-col gap-4 animate-slide-up">
+            <>
+              <div 
+                className="fixed inset-0 z-40 bg-neutral-950/40 md:hidden" 
+                onClick={() => setShowDatePicker(false)} 
+              />
+              <div className="fixed md:absolute bottom-0 md:bottom-auto left-0 md:left-auto md:right-0 mt-2 w-full md:w-72 bg-white dark:bg-neutral-900 md:border border-neutral-200 dark:border-neutral-800 rounded-t-2xl md:rounded-lg shadow-popover p-4 z-50 flex flex-col gap-4 animate-slide-up rounded-b-none md:rounded-b-lg">
               <div className="grid grid-cols-2 gap-2">
                 <Button size="sm" variant="ghost" className="justify-start text-xs" onClick={() => handlePresetChange('today')}>
                   Today
@@ -228,6 +233,7 @@ export const Dashboard: React.FC = () => {
                 Apply Date Range
               </Button>
             </div>
+            </>
           )}
         </div>
       </div>
@@ -239,14 +245,14 @@ export const Dashboard: React.FC = () => {
       ) : (
         <>
           {/* Metrics Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-slide-up">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 animate-slide-up">
             {/* Revenue Metric */}
             <Card className="flex items-center justify-between border-l-4 border-l-brand-500">
               <div className="space-y-1">
                 <span className="text-xs uppercase tracking-wider font-semibold text-neutral-400">
                   Total Revenue
                 </span>
-                <h3 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
+                <h3 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">
                   {formatCurrency(revenue)}
                 </h3>
                 <div className="flex items-center gap-1.5 text-xs">
@@ -266,7 +272,7 @@ export const Dashboard: React.FC = () => {
                   <span className="text-neutral-400">vs previous period</span>
                 </div>
               </div>
-              <div className="p-3 bg-brand-50 dark:bg-brand-950/40 rounded-full text-brand-600 dark:text-brand-400">
+              <div className="hidden sm:flex p-3 bg-brand-50 dark:bg-brand-950/40 rounded-full text-brand-600 dark:text-brand-400">
                 <CurrencyDollarIcon className="w-6 h-6" />
               </div>
             </Card>
@@ -277,7 +283,7 @@ export const Dashboard: React.FC = () => {
                 <span className="text-xs uppercase tracking-wider font-semibold text-neutral-400">
                   Total Orders
                 </span>
-                <h3 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
+                <h3 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">
                   {ordersCount}
                 </h3>
                 <div className="flex items-center gap-1.5 text-xs">
@@ -297,7 +303,7 @@ export const Dashboard: React.FC = () => {
                   <span className="text-neutral-400">vs previous period</span>
                 </div>
               </div>
-              <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 rounded-full text-emerald-600 dark:text-emerald-400">
+              <div className="hidden sm:flex p-3 bg-emerald-50 dark:bg-emerald-950/40 rounded-full text-emerald-600 dark:text-emerald-400">
                 <ShoppingCartIcon className="w-6 h-6" />
               </div>
             </Card>
@@ -308,7 +314,7 @@ export const Dashboard: React.FC = () => {
                 <span className="text-xs uppercase tracking-wider font-semibold text-neutral-400">
                   New Customers
                 </span>
-                <h3 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
+                <h3 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">
                   {newCustomers}
                 </h3>
                 <div className="flex items-center gap-1.5 text-xs">
@@ -328,7 +334,7 @@ export const Dashboard: React.FC = () => {
                   <span className="text-neutral-400">vs previous period</span>
                 </div>
               </div>
-              <div className="p-3 bg-amber-50 dark:bg-amber-950/40 rounded-full text-amber-600 dark:text-amber-400">
+              <div className="hidden sm:flex p-3 bg-amber-50 dark:bg-amber-950/40 rounded-full text-amber-600 dark:text-amber-400">
                 <UserPlusIcon className="w-6 h-6" />
               </div>
             </Card>
@@ -339,15 +345,15 @@ export const Dashboard: React.FC = () => {
             {/* Revenue Trend Area Chart */}
             <Card className="lg:col-span-8 flex flex-col gap-4">
               <div>
-                <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-50 flex items-center gap-2">
+                <h3 className="text-base font-bold text-neutral-900 dark:text-white flex items-center gap-2">
                   <ArrowTrendingUpIcon className="w-5 h-5 text-brand-600" />
                   Sales Revenue Trend
                 </h3>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                <p className="text-xs text-neutral-500 dark:text-neutral-300">
                   Visualizing product performance and overall transaction volumes.
                 </p>
               </div>
-              <div className="h-80 w-full">
+              <div className="h-80 w-full -ml-4 md:ml-0">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={trendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <defs>
@@ -357,8 +363,8 @@ export const Dashboard: React.FC = () => {
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" className="dark:stroke-neutral-800" />
-                    <XAxis dataKey="label" stroke="#9ca3af" fontSize={11} tickLine={false} axisLine={false} />
-                    <YAxis stroke="#9ca3af" fontSize={11} tickLine={false} axisLine={false} />
+                    <XAxis dataKey="label" stroke="#9ca3af" fontSize={10} tickLine={false} axisLine={false} />
+                    <YAxis stroke="#9ca3af" fontSize={10} tickLine={false} axisLine={false} tickFormatter={(val) => `${val / 1000}k`} />
                     <ChartTooltip
                       contentStyle={{
                         backgroundColor: 'var(--color-white, #ffffff)',
@@ -377,10 +383,10 @@ export const Dashboard: React.FC = () => {
             {/* Top Selling Products List/Bar Chart */}
             <Card className="lg:col-span-4 flex flex-col gap-4">
               <div>
-                <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-50">
+                <h3 className="text-base font-bold text-neutral-900 dark:text-white">
                   Top Selling Products
                 </h3>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                <p className="text-xs text-neutral-500 dark:text-neutral-300">
                   Highest volume items in selected date range.
                 </p>
               </div>
@@ -421,7 +427,7 @@ export const Dashboard: React.FC = () => {
                           <p className="text-neutral-400 mt-0.5">{item.productDTO.barcode}</p>
                         </div>
                         <div className="text-right">
-                          <p className="font-bold text-neutral-900 dark:text-neutral-50">
+                          <p className="font-bold text-neutral-900 dark:text-white">
                             {formatCurrency(item.totalRevenue)}
                           </p>
                           <p className="text-neutral-500 mt-0.5">{item.quantity} units</p>

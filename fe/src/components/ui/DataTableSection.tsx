@@ -86,7 +86,7 @@ export function DataTableSection<T>({
                   placeholder={searchPlaceholder}
                   value={searchTerm ?? ''}
                   onChange={(e) => onSearchTermChange(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 text-sm rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-950 dark:text-neutral-55 focus:outline-hidden focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
+                  className="w-full pl-9 pr-4 py-2 text-sm rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-950 dark:text-neutral-200 focus:outline-hidden focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
                 />
               </div>
               {showSearchButton && (

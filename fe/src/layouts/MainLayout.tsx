@@ -57,16 +57,11 @@ export const MainLayout: React.FC = () => {
   };
 
   return (
-    <div className="h-screen overflow-hidden flex flex-col bg-neutral-50 dark:bg-neutral-950 text-neutral-800 dark:text-neutral-100 transition-colors duration-200">
+    <div className="min-h-screen md:h-screen overflow-y-auto md:overflow-hidden flex flex-col bg-neutral-50 dark:bg-neutral-950 text-neutral-800 dark:text-neutral-100 transition-colors duration-200">
       {/* Header */}
       <header className="sticky top-0 z-40 h-16 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 px-4 py-4 md:px-6 flex justify-between items-center transition-colors duration-200">
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="md:hidden p-1.5 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors"
-          >
-            <Bars3Icon className="w-6 h-6" />
-          </button>
+          {/* Hamburger Menu Hidden on Mobile as per refactor */}
           <div className="flex items-center gap-2">
             <span className="w-7 h-7 bg-brand-600 rounded-md flex items-center justify-center text-white font-bold text-sm shadow-subtle shrink-0">
               S
@@ -145,7 +140,7 @@ export const MainLayout: React.FC = () => {
       </header>
 
       {/* Main Container */}
-      <div className="flex-1 min-h-0 flex relative">
+      <div className="flex-1 md:min-h-0 flex relative">
         {/* Sidebar Desktop */}
         <aside className="hidden md:flex flex-col w-64 bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-800 transition-colors duration-200">
           <nav className="flex-1 px-4 py-6 space-y-1">
@@ -173,69 +168,13 @@ export const MainLayout: React.FC = () => {
           </nav>
         </aside>
 
-        {/* Sidebar Mobile Overlay */}
-        <div
-          className={clsx(
-            'fixed inset-0 z-50 md:hidden transition-opacity duration-300',
-            sidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-          )}
-        >
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 bg-neutral-950/40 dark:bg-neutral-950/70"
-            onClick={() => setSidebarOpen(false)}
-          />
-
-          <div
-            className={clsx(
-              'fixed top-0 bottom-0 left-0 w-64 bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-800 flex flex-col p-4 transition-transform duration-300 ease-out',
-              sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-            )}
-          >
-            <div className="flex justify-between items-center mb-6">
-              <span className="font-bold text-lg bg-gradient-to-r from-neutral-900 to-neutral-700 dark:from-neutral-100 dark:to-neutral-300 bg-clip-text text-transparent">
-                SaleDynamics
-              </span>
-              <button
-                onClick={() => setSidebarOpen(false)}
-                className="p-1.5 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors"
-              >
-                <XMarkIcon className="w-5 h-5" />
-              </button>
-            </div>
-            <nav className="flex-1 space-y-1">
-              {navigations.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <NavLink
-                    key={item.path}
-                    to={item.path}
-                    onClick={() => setSidebarOpen(false)}
-                    className={({ isActive }) =>
-                      clsx(
-                        'flex items-center gap-3 px-4 py-3 rounded-md text-sm font-semibold transition-all duration-200',
-                        isActive
-                          ? 'bg-brand-50 text-brand-700 dark:bg-brand-950/40 dark:text-brand-400'
-                          : 'text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-800/50'
-                      )
-                    }
-                  >
-                    <Icon className="w-5 h-5 shrink-0" />
-                    {item.title}
-                  </NavLink>
-                );
-              })}
-            </nav>
-          </div>
-        </div>
-
         {/* Content Shell */}
-        <main className="flex-1 min-w-0 p-4 md:p-6 overflow-hidden flex flex-col">
-          <div className="container mx-auto w-full flex-1 min-h-0 flex flex-col">
+        <main className="flex-1 min-w-0 p-4 md:p-6 pb-24 md:pb-6 md:overflow-hidden flex flex-col">
+          <div className="container mx-auto w-full flex-1 md:min-h-0 flex flex-col">
             <AnimatePresence mode="wait">
               <motion.div
                 key={location.pathname}
-                className="flex-1 min-h-0 flex flex-col"
+                className="flex-1 md:min-h-0 flex flex-col"
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -12 }}
@@ -247,6 +186,30 @@ export const MainLayout: React.FC = () => {
           </div>
         </main>
       </div>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-white dark:bg-neutral-900 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-around pb-2">
+        {navigations.slice(0, 4).map((item) => {
+          const Icon = item.icon;
+          return (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) =>
+                clsx(
+                  'flex flex-col items-center gap-1 py-3 px-2 flex-1 text-[10px] font-medium transition-colors',
+                  isActive
+                    ? 'text-brand-600 dark:text-brand-400'
+                    : 'text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200'
+                )
+              }
+            >
+              <Icon className="w-6 h-6 mb-0.5" />
+              <span className="truncate">{item.title}</span>
+            </NavLink>
+          );
+        })}
+      </nav>
 
       {/* Session Expired / Re-authentication In-place Modal */}
       <Dialog
