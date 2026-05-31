@@ -291,7 +291,7 @@ The project includes a `rebuild.sh` script to clean previous runs, build the bac
 
 For local validation and sandbox review, use the default administrator credentials:
 *   **Username:** `admin`
-*   **Password:** `admin`
+*   **Password:** `password`
 
 *Note: You will be prompted to update this password immediately upon your first login.*
 

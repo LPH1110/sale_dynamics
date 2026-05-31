@@ -22,9 +22,11 @@ import { ProductDTO } from '@/types/product.types';
 import { Customer } from '@/types/customer.types';
 import { OrderItemDTO } from '@/types/order.types';
 import { Card, Button, Input, Spinner, Dialog } from '@/components/ui';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const CreateOrder: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   // Cart & checkout states
   const [cartItems, setCartItems] = useState<OrderItemDTO[]>([]);
@@ -160,6 +162,7 @@ export const CreateOrder: React.FC = () => {
         })),
         description: orderNote,
         total: finalAmount,
+        issuer: user?.username,
       });
 
       // 2. Process payment state immediately if mode is PAID

@@ -104,7 +104,7 @@ public class OrderServiceImpl implements OrderService{
                 )
         );
 
-        int orderStatusId  = orderDTO.excess() >= 0 ? 3 : 2;
+        int orderStatusId  = orderDTO.excess() >= 0 ? 2 : 1;
         OrderStatus orderStatus = orderStatusRepository.findById(orderStatusId).get();
         // bind relationship
         newOrder.setOrderStatus(orderStatus);
@@ -147,7 +147,7 @@ public class OrderServiceImpl implements OrderService{
         order.setCustomerOwed(customerOwed);
 
         if (received >= order.getTotal()) {
-            OrderStatus status = orderStatusRepository.findById(3).get();
+            OrderStatus status = orderStatusRepository.findById(2).get();
             order.setOrderStatus(status);
         }
         return new ResponseEntity<>(orderDTOMapper.apply(orderRepository.save(order)), HttpStatus.ACCEPTED);
