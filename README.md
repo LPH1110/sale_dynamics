@@ -11,7 +11,7 @@ SaleDynamics is a high-performance, enterprise-ready Point of Sale (POS) and inv
 
 ## Product Overview
 
-*Placeholder for Showcase Product GIF / Video Demonstration*
+![SaleDynamics Demo](docs/sale_dynamics_demo.gif)
 
 ---
 
