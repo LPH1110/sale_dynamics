@@ -5,7 +5,7 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.0-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 
-SaleDynamics is a high-performance, responsive Point of Sale (POS) and inventory management system designed for modern retail environments (such as electronics and mobile accessories). The platform emphasizes seamless mobile-desktop user experiences and a secure, containerized backend architecture.
+SaleDynamics is a high-performance, enterprise-ready Point of Sale (POS) and inventory management system designed for modern retail environments (such as electronics and mobile accessories). The platform emphasizes a robust, secure, containerized backend architecture and a highly efficient desktop checkout experience.
 
 ---
 
@@ -19,7 +19,7 @@ SaleDynamics is a high-performance, responsive Point of Sale (POS) and inventory
 
 SaleDynamics is designed to address key operational challenges in retail management:
 
-*   **Omnichannel POS Terminal:** A fluid checkout interface optimized for both desktop monitors and one-handed mobile use. The interface features a thumb-zone optimized layout using a persistent Bottom Navigation bar.
+*   **High-Speed POS Terminal:** A fluid, streamlined checkout interface optimized for desktop monitors, ensuring quick transaction processing in high-volume retail environments with a focus on rapid data entry.
 *   **Real-time Analytics Dashboard:** Monitors revenue trends, order volumes, and top-performing products with responsive, interactive charting.
 *   **Secure Staff Management:** Role-based access control (RBAC) with account suspension workflows, asymmetric token-based authentication (RSA keys), and secure email-based staff onboarding.
 *   **Optimized Cloud Storage:** Direct integration with Cloudinary for scalable, CDN-backed product image hosting and management.
@@ -183,11 +183,11 @@ erDiagram
 
 ## Technical Challenges & Engineering Solutions
 
-### 1. Mobile-First POS Interface & Viewport Constraints
-Point of Sale interfaces are traditionally data-heavy and struggle to adapt to mobile dimensions. To resolve this:
-*   Developed responsive, stackable container layouts that replace fixed viewport constraints.
-*   Enforced bottom navigation bars and thumb-zone optimization to streamline mobile-specific checkouts.
-*   Prevented height clipping and page-scrolling conflicts across different screen dimensions using dynamic height variables (`min-h-screen` vs `h-screen`).
+### 1. High-Performance Checkout & State Management
+Point of Sale interfaces are traditionally data-heavy and can suffer from performance bottlenecks during complex transactions. To resolve this:
+*   Developed highly optimized, stackable container layouts ensuring fluid rendering of large inventory catalogs.
+*   Implemented strict state management protocols to prevent re-rendering loops during rapid barcode scanning and cart updates.
+*   Structured the application using dynamic layout structures to maintain responsiveness across varying desktop resolutions.
 
 ### 2. High-Contrast Accessible Dark Mode
 Ensured readability and accessibility under various lighting environments (especially in dark warehouse or counter setups) by:
