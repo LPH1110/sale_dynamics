@@ -51,7 +51,7 @@ graph TD
     end
 
     subgraph Database
-        DB[(PostgreSQL / MySQL)]
+        DB[(MySQL)]
     end
 
     UI --> State
